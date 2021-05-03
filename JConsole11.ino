@@ -17,6 +17,7 @@
 #include "SPI.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
+#include "GameObject.h"
 
 // For the Adafruit shield, these are the default.
 #define TFT_DC 4
@@ -50,6 +51,29 @@ void setup() {
   Serial.print("Image Format: 0x"); Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDSELFDIAG);
   Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
+  tft.fillScreen(ILI9341_BLACK);
+
+   uint16_t pcolors[25];
+   for (int i = 0; i < 25; i++)
+   {
+      pcolors[i] = 0x8282;
+   }
+   GameObject gameObject(&tft, pcolors);
+
+   //uint16_t pcolors[25];
+   //for (int i = 0; i < 25; i++)
+   //{
+   //   pcolors[i] = 0x8282;
+   //}
+   //uint16_t startx = 100;
+   //tft.drawRGBBitmap(startx, 100, pcolors, 5, 5);
+
+   while (true)
+   {
+      delay(1000);
+   }
+  Serial.println("Setup done");
+  /*
   uint16_t pcolors[225];
 
   for (int i = 0; i < 225; i++)
@@ -64,6 +88,7 @@ void setup() {
       startx += 10;
       delay(10);
   }
+  */
 
   /*
   
