@@ -1,9 +1,7 @@
 /*******************************************************
-* SPRITE CLASS
-* DESC: The sprite class handles the behavior of a 2D sprite
-* Gameobject. The class is desinged to be inherited and subclasses
-* can be used to emulate different behaviors.
-* This class was re-written to work with JConsole11
+* GAMEOBJECT CLASS
+* DESC: The game object class is designed to provide a framework 
+* for creating basic gameobjects using the ILI9341 LCD library
 * Author: Jonathan L Clark
 * Date: 5/2/2021
 *******************************************************/
@@ -12,6 +10,7 @@
 #include "GameObject.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
+#include "Physics.h"
 
 GameObject::GameObject()
 {
@@ -29,6 +28,22 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
+/*********************************************************************
+* PHYSICS MOVE
+* DESC: Handles moving the gameobject based on ~newtonian physics
+*********************************************************************/
+void GameObject::PhysicsMove()
+{
+    int16_t nextPosX = 0;
+    int16_t nextPosY = 0;
+    phyicsEngine.Compute(xPos, yPos, &nextPosX, &nextPosY);
+    Move(xPos - nextPosX, yPos - nextPosY);
+}
+
+/*********************************************************************
+* MOVE
+* DESC: Handles moving the gameobject.
+*********************************************************************/
 void GameObject::Move(int16_t deltaX, int16_t deltaY)
 {
    int16_t prevX = xPos;
