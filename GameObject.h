@@ -17,10 +17,16 @@ class GameObject
    public:
       // Public Functions
       GameObject();
-      GameObject(Adafruit_ILI9341 *inTft, uint16_t* pcolors);
+      void Move(int16_t deltaX, int16_t deltaY);
+      GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors);
    
    private:
       Adafruit_ILI9341 *tft;
+      uint16_t* image;
+      int16_t xPos;
+      int16_t yPos;
+      int16_t width;
+      int16_t height;
 };
 
 #endif

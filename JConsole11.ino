@@ -38,7 +38,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("ILI9341 Test!"); 
  
-  tft.begin();
+  tft.begin(200000000);
 
   // read diagnostics (optional but can help debug problems)
   uint8_t x = tft.readcommand8(ILI9341_RDMODE);
@@ -53,96 +53,17 @@ void setup() {
   Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
   tft.fillScreen(ILI9341_BLACK);
 
-   uint16_t pcolors[25];
-   for (int i = 0; i < 25; i++)
+   uint16_t pcolors[225];
+   for (int i = 0; i < 225; i++)
    {
       pcolors[i] = 0x8282;
    }
-   GameObject gameObject(&tft, pcolors);
-
-   //uint16_t pcolors[25];
-   //for (int i = 0; i < 25; i++)
-   //{
-   //   pcolors[i] = 0x8282;
-   //}
-   //uint16_t startx = 100;
-   //tft.drawRGBBitmap(startx, 100, pcolors, 5, 5);
-
-   while (true)
+   GameObject gameObject(&tft, 10, 100, 15, 15, pcolors);
+   for (int i = 0; i < 500; i++)
    {
-      delay(1000);
+       gameObject.Move(2, 0);
+       delay(50);
    }
-  Serial.println("Setup done");
-  /*
-  uint16_t pcolors[225];
-
-  for (int i = 0; i < 225; i++)
-  {
-      pcolors[i] = 0x8282;
-  }
-  uint16_t startx = 100;
-  tft.drawRGBBitmap(startx, 100, pcolors, 15, 15);
-  for (int i = 0; i < 200; i++)
-  {
-      tft.drawRGBBitmap(startx, 100, pcolors, 15, 15);
-      startx += 10;
-      delay(10);
-  }
-  */
-
-  /*
-  
-  Serial.println(F("Benchmark                Time (microseconds)"));
-  delay(10);
-  Serial.print(F("Screen fill              "));
-  Serial.println(testFillScreen());
-  delay(500);
-
-  Serial.print(F("Text                     "));
-  Serial.println(testText());
-  delay(3000);
-
-  Serial.print(F("Lines                    "));
-  Serial.println(testLines(ILI9341_CYAN));
-  delay(500);
-
-  Serial.print(F("Horiz/Vert Lines         "));
-  Serial.println(testFastLines(ILI9341_RED, ILI9341_BLUE));
-  delay(500);
-
-  Serial.print(F("Rectangles (outline)     "));
-  Serial.println(testRects(ILI9341_GREEN));
-  delay(500);
-
-  Serial.print(F("Rectangles (filled)      "));
-  Serial.println(testFilledRects(ILI9341_YELLOW, ILI9341_MAGENTA));
-  delay(500);
-
-  Serial.print(F("Circles (filled)         "));
-  Serial.println(testFilledCircles(10, ILI9341_MAGENTA));
-
-  Serial.print(F("Circles (outline)        "));
-  Serial.println(testCircles(10, ILI9341_WHITE));
-  delay(500);
-
-  Serial.print(F("Triangles (outline)      "));
-  Serial.println(testTriangles());
-  delay(500);
-
-  Serial.print(F("Triangles (filled)       "));
-  Serial.println(testFilledTriangles());
-  delay(500);
-
-  Serial.print(F("Rounded rects (outline)  "));
-  Serial.println(testRoundRects());
-  delay(500);
-
-  Serial.print(F("Rounded rects (filled)   "));
-  Serial.println(testFilledRoundRects());
-  delay(500);
-
-  Serial.println(F("Done!"));
-  */
 
 }
 
