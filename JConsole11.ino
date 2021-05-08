@@ -69,7 +69,7 @@ void setup() {
        msTicks = millis();
        if (nextTime < msTicks)
        {
-           //gameObject.Move(25, -25); //PhysicsMove();
+           //gameObject.Move(0, 5); //PhysicsMove();
            gameObject.PhysicsMove();
            nextTime = msTicks + 50;
        }

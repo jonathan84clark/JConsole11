@@ -101,6 +101,14 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
    {
       prevXStopped = false;
    }
+   //Serial.print("Prev: ");
+   //Serial.print(prevX);
+   //Serial.print(",");
+   //Serial.print(prevY);
+   //Serial.print(" Current: ");
+   //Serial.print(xPos);
+   //Serial.print(",");
+   //Serial.println(yPos);
 
    if (xMoveStopped)
    {
@@ -124,6 +132,7 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
    // Moving left, only delete what we absolutley need to
    else
    {
+       
        tft->fillRect(prevY, (xPos + width), height, abs(deltaX), ILI9341_BLACK);
    }
 
@@ -149,7 +158,8 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
    }
    else
    {
-       tft->fillRect((prevY + height), prevX, abs(deltaY), width, ILI9341_BLACK);
+       Serial.println("move down");
+       tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, ILI9341_BLACK);
    }
 
    //if (!(yMoveStopped && xMoveStopped))
