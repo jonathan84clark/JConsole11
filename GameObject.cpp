@@ -28,6 +28,11 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
+void GameObject::SetVelocity(float inXVelocity, float inYVelocity)
+{
+   physics.SetVelocity(inXVelocity, inYVelocity);
+}
+
 /*********************************************************************
 * PHYSICS MOVE
 * DESC: Handles moving the gameobject based on ~newtonian physics
@@ -36,8 +41,17 @@ void GameObject::PhysicsMove()
 {
     int16_t nextPosX = 0;
     int16_t nextPosY = 0;
-    phyicsEngine.Compute(xPos, yPos, &nextPosX, &nextPosY);
+    physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
     Move(xPos - nextPosX, yPos - nextPosY);
+}
+
+/*********************************************************************
+* SET PHYSICS
+* DESC: Handles moving the gameobject.
+*********************************************************************/
+void GameObject::SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag)
+{
+   physics.SetPhysics(inMass, inFriction, inGravity, inBouncy, inDrag);
 }
 
 /*********************************************************************

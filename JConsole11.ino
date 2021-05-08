@@ -59,16 +59,27 @@ void setup() {
       pcolors[i] = 0x8282;
    }
    GameObject gameObject(&tft, 10, 100, 15, 15, pcolors);
-   for (int i = 0; i < 500; i++)
+   unsigned long msTicks = 0;
+   unsigned long nextTime = 0;
+   gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
+   gameObject.SetVelocity(-5.0, 0.0);
+   Serial.println("Call1");
+   while (true)
    {
-       gameObject.Move(2, 0);
-       delay(50);
+       msTicks = millis();
+       if (nextTime < msTicks)
+       {
+           gameObject.PhysicsMove();
+           nextTime = msTicks + 50;
+       }
+      
    }
 
 }
 
 
-void loop(void) {
+void loop(void) 
+{
   /*
   for(uint8_t rotation=0; rotation<4; rotation++) {
     tft.setRotation(rotation);

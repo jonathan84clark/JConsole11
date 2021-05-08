@@ -9,17 +9,17 @@
 #ifndef _PHYSICS_
 #define _PHYSICS_
 
+#define PIXEL_SCALER 0.5
 
 class Physics
 {
    public:
        Physics();
        Physics(float inMass, float inFriction, float inGravity);
-       void Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextposY);
+       void Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY);
        void SetVelocity(float inVelX, float inVelY);
-       void SetBouncy(float inBouncy);
-       void SetGravity(float inGravity);
-       bool getEnabled() { return enabled;}
+       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
+       //bool getEnabled() { return enabled;}
    
    private:
       float friction;
@@ -28,6 +28,7 @@ class Physics
       float mass;
       float bouncy;
       float gravity;
+      float drag;
       bool enabled;
       
 };

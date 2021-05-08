@@ -42,9 +42,12 @@ Physics::Physics(float inMass, float inFriction, float inGravity)
 * DESC: Computes the next frame position based on the velocity, friction
 * and gravity of the object.
 *********************************************************************/
-void Physics::Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextposY)
+void Physics::Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY)
 {
-  
+   velocityX = velocityX - (drag * velocityX); // Drag is proportional to velocity, here we assume it's linear
+   velocityY = velocityY - (drag * velocityY);
+   *nextPosY = posY + (int16_t)(velocityY * PIXEL_SCALER);
+   *nextPosX = posX + (int16_t)(velocityX * PIXEL_SCALER);
 }
 
 /*********************************************************************
@@ -57,17 +60,14 @@ void Physics::SetVelocity(float inVelX, float inVelY)
 }
 
 /*********************************************************************
-* SET BOUNCY
+* SET PHYSICS
 *********************************************************************/
-void Physics::SetBouncy(float inBouncy)
+void Physics::SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag)
 {
-   bouncy = inBouncy;
-}
-
-/*********************************************************************
-* SET GRAVITY
-*********************************************************************/
-void Physics::SetGravity(float inGravity)
-{
+   mass = inMass;
+   friction = inFriction;
    gravity = inGravity;
+   bouncy = inBouncy;
+   drag = inDrag;
+   enabled = true;
 }
