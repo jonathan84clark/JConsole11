@@ -44,8 +44,11 @@ Physics::Physics(float inMass, float inFriction, float inGravity)
 *********************************************************************/
 void Physics::Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY)
 {
+   //Calculate velocity due to gravity
+   velocityY = velocityY + gravity * 0.3;
    velocityX = velocityX - (drag * velocityX); // Drag is proportional to velocity, here we assume it's linear
    velocityY = velocityY - (drag * velocityY);
+
    *nextPosY = posY + (int16_t)(velocityY * PIXEL_SCALER);
    *nextPosX = posX + (int16_t)(velocityX * PIXEL_SCALER);
 }

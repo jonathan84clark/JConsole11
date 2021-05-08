@@ -31,6 +31,8 @@ class GameObject
       int16_t yPos;
       int16_t width;
       int16_t height;
+      bool prevXStopped;
+      bool prevYStopped;
 };
 
 #endif

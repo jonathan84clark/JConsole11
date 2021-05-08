@@ -58,17 +58,18 @@ void setup() {
    {
       pcolors[i] = 0x8282;
    }
-   GameObject gameObject(&tft, 10, 100, 15, 15, pcolors);
+   GameObject gameObject(&tft, 200, 100, 15, 15, pcolors);
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
-   gameObject.SetVelocity(-5.0, 0.0);
+   gameObject.SetVelocity(10.0, -30.0);
    Serial.println("Call1");
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
+           //gameObject.Move(25, -25); //PhysicsMove();
            gameObject.PhysicsMove();
            nextTime = msTicks + 50;
        }

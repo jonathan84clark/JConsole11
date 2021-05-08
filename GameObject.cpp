@@ -14,7 +14,8 @@
 
 GameObject::GameObject()
 {
-
+   prevXStopped = false;
+   prevYStopped = false;
 }
 
 GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors)
@@ -25,6 +26,8 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    width = inWidth;
    image = pcolors;
    tft = inTft;
+   prevXStopped = false;
+   prevYStopped = false;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -79,6 +82,10 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
        yMoveStopped = 2;
        yPos = 240 - height;
    }
+   else
+   {
+      prevYStopped = false;
+   }
 
    if (xPos < 0)
    {
@@ -90,51 +97,63 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
       xMoveStopped = 2;
       xPos = 320 - width;
    }
+   else
+   {
+      prevXStopped = false;
+   }
 
    if (xMoveStopped)
    {
-     
+      if (!prevXStopped)
+      {
+         tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+         prevXStopped = true;
+      }
    }
    // If the object we are moving is greater in width than the amount we are moving we just delete the object
-   else if (abs(deltaX) > width)
+   else if (abs(deltaX) >= width)
    {
-       tft->fillRect(yPos, prevX, height, width, ILI9341_BLACK);
-       prevDeleted = 1;
+       tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+       //prevDeleted = 1;
    }
    // Moving right, only delete what we absolutley need to
    else if (deltaX > 0)
    {
-       tft->fillRect(yPos, prevX, height, abs(deltaX), ILI9341_BLACK);
+       tft->fillRect(prevY, xPos, height, abs(deltaX), ILI9341_BLACK);
    }
    // Moving left, only delete what we absolutley need to
    else
    {
-       tft->fillRect(yPos, (prevX + width), height, abs(deltaX), ILI9341_BLACK);
+       tft->fillRect(prevY, (xPos + width), height, abs(deltaX), ILI9341_BLACK);
    }
 
    if (yMoveStopped)
    {
-    
+      if (!prevYStopped)
+      {
+         tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+         prevYStopped = true;
+      }
    }
    // If the object we are moving is greater in height then the amount we are moving we just delete the object
-   else if (abs(deltaY) > height)
+   else if (abs(deltaY) >= height)
    {
-       if (!prevDeleted)
-       {
-          tft->fillRect(yPos, prevX, height, width, ILI9341_BLACK);
-       }
+       //if (!prevDeleted)
+       //{
+        tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+      // }
    }
    else if (deltaY > 0)
    {
-       tft->fillRect(prevY, xPos, abs(deltaY), width, ILI9341_BLACK);
+       tft->fillRect(prevY, prevX, abs(deltaY), width, ILI9341_BLACK);
    }
    else
    {
-       tft->fillRect((prevY + height), xPos, abs(deltaY), width, ILI9341_BLACK);
+       tft->fillRect((prevY + height), prevX, abs(deltaY), width, ILI9341_BLACK);
    }
 
-   if (!(yMoveStopped && xMoveStopped))
-   {
+   //if (!(yMoveStopped && xMoveStopped))
+   //{
       tft->drawRGBBitmap(yPos, xPos, image, height, width);
-   }
+   //}
 }
