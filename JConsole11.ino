@@ -27,6 +27,19 @@
 #define TFT_RST 5
 #define TFT_MISO 0
 
+#define JOYSTICK_X A2
+#define JOYSTICK_Y A1
+#define JOYSTICK_BTN 22
+#define SELECT_BTN 15
+#define START_BTN 14
+#define TOP_RIGHT 11
+#define TOP_LEFT 12
+#define BOTTOM_RIGHT 10
+#define BOTTOM_LEFT 9
+#define LEDS 21
+
+#define ADC_MAX 4095
+
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 // If using the breakout, change pins as desired
@@ -35,6 +48,16 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_R
 void setup() {
   pinMode(7, OUTPUT);
   digitalWrite(7, HIGH);
+  pinMode(JOYSTICK_X, INPUT);
+  pinMode(JOYSTICK_Y, INPUT);
+  pinMode(JOYSTICK_BTN, INPUT);
+  pinMode(SELECT_BTN, INPUT_PULLUP);
+  pinMode(START_BTN, INPUT_PULLUP);
+  pinMode(TOP_RIGHT, INPUT_PULLUP);
+  pinMode(TOP_LEFT, INPUT_PULLUP);
+  pinMode(BOTTOM_RIGHT, INPUT_PULLUP);
+  pinMode(BOTTOM_LEFT, INPUT_PULLUP);
+  pinMode(LEDS, OUTPUT);
   Serial.begin(115200);
   Serial.println("ILI9341 Test!"); 
  
@@ -61,9 +84,9 @@ void setup() {
    GameObject gameObject(&tft, 200, 100, 15, 15, pcolors);
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
+   unsigned long nextControlTime = 0;
    gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
    gameObject.SetVelocity(10.0, -30.0);
-   Serial.println("Call1");
    while (true)
    {
        msTicks = millis();
@@ -73,6 +96,28 @@ void setup() {
            gameObject.PhysicsMove();
            nextTime = msTicks + 50;
        }
+       if (nextControlTime < msTicks)
+       {
+           float xScaler = (float)analogRead(JOYSTICK_X) - (float)(ADC_MAX / 2);
+           xScaler = xScaler / (float)(ADC_MAX / 2);
+           float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
+           yScaler = yScaler / (float)(ADC_MAX / 2);
+      
+           //Serial.println(analogRead(JOYSTICK_X));
+           //Serial.println(analogRead(JOYSTICK_Y));
+           Serial.println(xScaler);
+           Serial.println(yScaler);
+           Serial.println(digitalRead(JOYSTICK_BTN));
+           Serial.println(digitalRead(SELECT_BTN));
+           Serial.println(digitalRead(START_BTN));
+           Serial.println(digitalRead(TOP_RIGHT));
+           Serial.println(digitalRead(TOP_LEFT));
+           Serial.println(digitalRead(BOTTOM_RIGHT));
+           Serial.println(digitalRead(BOTTOM_LEFT));
+           Serial.println();
+           nextControlTime = msTicks + 200;
+       }
+       
       
    }
 
