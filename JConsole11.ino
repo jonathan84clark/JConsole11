@@ -27,23 +27,83 @@
 #define TFT_RST 5
 #define TFT_MISO 0
 
+#define NUM_BTNS 7
 #define JOYSTICK_X A2
 #define JOYSTICK_Y A1
 #define JOYSTICK_BTN 22
 #define SELECT_BTN 15
 #define START_BTN 14
 #define TOP_RIGHT 11
-#define TOP_LEFT 12
+#define TOP_LEFT 8
 #define BOTTOM_RIGHT 10
 #define BOTTOM_LEFT 9
 #define LEDS 21
 
 #define ADC_MAX 4095
 
+#define COLOR_NAVY        0x000F      /*   0,   0, 128 */
+#define COLOR_DARKGREEN   0x03E0      /*   0, 128,   0 */
+#define COLOR_DARKCYAN    0x03EF      /*   0, 128, 128 */
+#define COLOR_MAROON      0x7800      /* 128,   0,   0 */
+#define COLOR_PURPLE      0x780F      /* 128,   0, 128 */
+#define COLOR_OLIVE       0x7BE0      /* 128, 128,   0 */
+#define COLOR_DARKGREY    0x7BEF      /* 128, 128, 128 */
+#define COLOR_ORANGE      0xFD20      /* 255, 165,   0 */
+#define COLOR_GREENYELLOW 0xAFE5      /* 173, 255,  47 */
+#define COLOR_PINK        0xF81F
+#define  COLOR_BLACK   0x0000
+#define COLOR_BLUE    0x001F
+#define COLOR_RED     0xF800
+#define COLOR_GREEN   0x07E0
+#define COLOR_CYAN    0x07FF
+#define COLOR_MAGENTA 0xF81F
+#define COLOR_YELLOW  0xFFE0
+#define COLOR_WHITE   0xFFFF
+#define COLOR_LTGREY  0xC618
+#define COLOR_DRKGREY 0x630C
+#define COLOR_GREY 0x630C
+#define COLOR_LTGREEN 0x04C0
+#define COLOR_LIMEGREEN 0x87E0
+#define COLOR_FORESTGREEN 0x2444
+#define COLOR_GOLDENROD 0xDD24
+#define COLOR_GREEN2 0x0400
+#define COLOR_LIGHTSEAGREEN 0x2595
+#define COLOR_MLRYGREEN 0x4A84
+#define COLOR_SKYBLUE 0x867F
+
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 // If using the breakout, change pins as desired
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
+unsigned int debounceTimes[NUM_BTNS];
+
+static uint16_t xWing[] = {
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_ORANGE, COLOR_ORANGE, COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_ORANGE, COLOR_ORANGE, COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_BLACK, COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_BLACK, COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_GREY,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_GREY,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_GREY,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_GREY,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLUE,   COLOR_BLUE,   COLOR_BLUE,  COLOR_BLUE,  COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_ORANGE, COLOR_ORANGE, COLOR_BLACK, COLOR_BLACK,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLUE,   COLOR_BLUE,   COLOR_BLUE,  COLOR_BLUE,  COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_ORANGE, COLOR_ORANGE, COLOR_BLACK, COLOR_BLACK,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_GREY,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_GREY,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_GREY,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_GREY,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_BLACK, COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_BLACK, COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_BLACK,  COLOR_BLACK,  COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_ORANGE, COLOR_ORANGE, COLOR_ORANGE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_ORANGE, COLOR_ORANGE, COLOR_ORANGE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK,  COLOR_WHITE, COLOR_WHITE,  COLOR_BLACK,  COLOR_BLACK,  COLOR_BLACK, COLOR_BLACK, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE,  COLOR_WHITE,  COLOR_WHITE, COLOR_WHITE,
+};
+
 
 void setup() {
   pinMode(7, OUTPUT);
@@ -74,27 +134,87 @@ void setup() {
   Serial.print("Image Format: 0x"); Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDSELFDIAG);
   Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
-  tft.fillScreen(ILI9341_BLACK);
+  tft.fillScreen(COLOR_WHITE);
 
-   uint16_t pcolors[225];
-   for (int i = 0; i < 225; i++)
+   // Clear all debounce times
+   for (int i = 0; i < NUM_BTNS; i++)
    {
-      pcolors[i] = 0x8282;
+      debounceTimes[i] = millis() + i;
    }
-   GameObject gameObject(&tft, 200, 100, 15, 15, pcolors);
+   uint16_t* newImage = new uint16_t[504];
+   int16_t height = 21;
+   int16_t width = 24;
+   int16_t position_index;
+   int16_t index = 0;
+   //for (int i = 0; i < (24 * 21); i++)
+   //{
+  //    newImage[i] = xWing[i];
+   //}
+   int16_t readStart = 0;
+  
+   for (int i = (height - 1); i > 0; i--)
+   {
+      readStart = i * width;
+      for (int j = 0; j < width; j++)
+      {
+         newImage[index] = xWing[readStart];
+         index++;
+         readStart++;
+      }
+   }
+   
+   
+   GameObject gameObject(&tft, 21, 24, 24, 21, newImage, COLOR_WHITE);
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
-   gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
+   //gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
    gameObject.SetVelocity(10.0, -30.0);
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
-           //gameObject.Move(0, 5); //PhysicsMove();
            gameObject.PhysicsMove();
            nextTime = msTicks + 50;
+       }
+       // Joystick/ Menu button handler
+       if (debounceTimes[0] < msTicks && digitalRead(JOYSTICK_BTN))
+       {
+           // Handle joystick btn pressed
+           debounceTimes[0] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Start button handler
+       if (debounceTimes[1] < msTicks && digitalRead(START_BTN))
+       {
+           // Handle joystick btn pressed
+           debounceTimes[1] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Select button handler
+       if (debounceTimes[2] < msTicks && digitalRead(SELECT_BTN))
+       {
+           // Handle joystick btn pressed
+           debounceTimes[2] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Fire button
+       if (debounceTimes[3] < msTicks && digitalRead(TOP_LEFT))
+       {
+           debounceTimes[3] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Top right button handler
+       if (debounceTimes[4] < msTicks && digitalRead(TOP_RIGHT))
+       {
+           debounceTimes[4] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Bottom left button handler
+       if (debounceTimes[5] < msTicks && digitalRead(BOTTOM_LEFT))
+       {
+           debounceTimes[5] = msTicks + 200; // Right now 200ms debounce time
+       }
+       // Bottom right button handler
+       if (debounceTimes[6] < msTicks && digitalRead(BOTTOM_RIGHT))
+       {
+           debounceTimes[6] = msTicks + 200; // Right now 200ms debounce time
        }
        if (nextControlTime < msTicks)
        {
@@ -102,23 +222,10 @@ void setup() {
            xScaler = xScaler / (float)(ADC_MAX / 2);
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
-      
-           //Serial.println(analogRead(JOYSTICK_X));
-           //Serial.println(analogRead(JOYSTICK_Y));
-           Serial.println(xScaler);
-           Serial.println(yScaler);
-           Serial.println(digitalRead(JOYSTICK_BTN));
-           Serial.println(digitalRead(SELECT_BTN));
-           Serial.println(digitalRead(START_BTN));
-           Serial.println(digitalRead(TOP_RIGHT));
-           Serial.println(digitalRead(TOP_LEFT));
-           Serial.println(digitalRead(BOTTOM_RIGHT));
-           Serial.println(digitalRead(BOTTOM_LEFT));
-           Serial.println();
-           nextControlTime = msTicks + 200;
+
+           gameObject.SetVelocity(xScaler * 20.0, yScaler * 20.0);
+           nextControlTime = msTicks + 50;
        }
-       
-      
    }
 
 }

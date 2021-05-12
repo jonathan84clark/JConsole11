@@ -18,7 +18,7 @@ GameObject::GameObject()
    prevYStopped = false;
 }
 
-GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors)
+GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors, uint16_t inBgColor)
 {
    xPos = inXPos;
    yPos = inYPos;
@@ -26,6 +26,7 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    width = inWidth;
    image = pcolors;
    tft = inTft;
+   bg_color = inBgColor;
    prevXStopped = false;
    prevYStopped = false;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
@@ -101,46 +102,38 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
    {
       prevXStopped = false;
    }
-   //Serial.print("Prev: ");
-   //Serial.print(prevX);
-   //Serial.print(",");
-   //Serial.print(prevY);
-   //Serial.print(" Current: ");
-   //Serial.print(xPos);
-   //Serial.print(",");
-   //Serial.println(yPos);
 
    if (xMoveStopped)
    {
       if (!prevXStopped)
       {
-         tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+         tft->fillRect(prevY, prevX, height, width, bg_color);
          prevXStopped = true;
       }
    }
    // If the object we are moving is greater in width than the amount we are moving we just delete the object
    else if (abs(deltaX) >= width)
    {
-       tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+       tft->fillRect(prevY, prevX, height, width, bg_color);
        //prevDeleted = 1;
    }
    // Moving right, only delete what we absolutley need to
    else if (deltaX > 0)
    {
-       tft->fillRect(prevY, xPos, height, abs(deltaX), ILI9341_BLACK);
+       tft->fillRect(prevY, prevX, height, abs(deltaX), bg_color);
    }
    // Moving left, only delete what we absolutley need to
    else
    {
        
-       tft->fillRect(prevY, (xPos + width), height, abs(deltaX), ILI9341_BLACK);
+       tft->fillRect(prevY, (xPos + width), height, abs(deltaX), bg_color);
    }
 
    if (yMoveStopped)
    {
       if (!prevYStopped)
       {
-         tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+         tft->fillRect(prevY, prevX, height, width, bg_color);
          prevYStopped = true;
       }
    }
@@ -149,17 +142,17 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
    {
        //if (!prevDeleted)
        //{
-        tft->fillRect(prevY, prevX, height, width, ILI9341_BLACK);
+        tft->fillRect(prevY, prevX, height, width, bg_color);
       // }
    }
    else if (deltaY > 0)
    {
-       tft->fillRect(prevY, prevX, abs(deltaY), width, ILI9341_BLACK);
+       tft->fillRect(prevY, prevX, abs(deltaY), width, bg_color);
    }
    else
    {
        Serial.println("move down");
-       tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, ILI9341_BLACK);
+       tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, bg_color);
    }
 
    //if (!(yMoveStopped && xMoveStopped))
