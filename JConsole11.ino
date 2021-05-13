@@ -146,25 +146,44 @@ void setup() {
    int16_t width = 24;
    int16_t position_index;
    int16_t index = 0;
+
+   // Direct copy
    //for (int i = 0; i < (24 * 21); i++)
    //{
   //    newImage[i] = xWing[i];
    //}
+
+   /*
    int16_t readStart = 0;
-  
-   for (int i = (height - 1); i > 0; i--)
+   // 180 degree flip
+   for (int i = (width - 1); i >= 0; i--)
    {
-      readStart = i * width;
-      for (int j = 0; j < width; j++)
+      readStart = i * height;
+      for (int j = 0; j < height; j++)
       {
          newImage[index] = xWing[readStart];
          index++;
          readStart++;
       }
    }
+   */
+   // Orientation right
+   int16_t imageIndex = 0;
+   int16_t readStart = 0;
+   for (int i = 0; i < height; i++)
+   {
+       readStart = i;
+       for (int j = 0; j < width; j++)
+       {
+          newImage[imageIndex] = xWing[readStart];
+          imageIndex++;
+          readStart += height;
+       }
+   }
    
    
-   GameObject gameObject(&tft, 21, 24, 24, 21, newImage, COLOR_WHITE);
+   //GameObject gameObject(&tft, 21, 24, 24, 21, newImage, COLOR_WHITE);
+   GameObject gameObject(&tft, 21, 24, 21, 24, newImage, COLOR_WHITE);
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
