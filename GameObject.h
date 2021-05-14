@@ -12,26 +12,37 @@
 #include "Adafruit_ILI9341.h"
 #include "Physics.h"
 
+enum Rotation {UP, DOWN, LEFT, RIGHT};
+
 class GameObject
 {
    public:
       // Public Functions
       GameObject();
+      ~GameObject(); // destructor
       void Move(int16_t deltaX, int16_t deltaY);
       void PhysicsMove();
+      void RotateDown();
+      void RotateUp();
+      void RotateLeft();
+      void RotateRight();
       void SetVelocity(float inXVelocity, float inYVelocity);
       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
+      uint8_t CheckCollision(GameObject* rightObject);
       GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors, uint16_t inBgColor);
    
    private:
       Adafruit_ILI9341 *tft;
       Physics physics;
+      uint16_t* original;
       uint16_t* image;
       uint16_t bg_color;
+      uint16_t imageSize;
       int16_t xPos;
       int16_t yPos;
       int16_t width;
       int16_t height;
+      Rotation rotation;
       bool prevXStopped;
       bool prevYStopped;
 };
