@@ -46,8 +46,9 @@ void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t 
 {
    if (active)
    {
-      tft->fillRect(yPos, xPos, height, width, bg_color);
-      delete[] image;
+      Serial.println("Call0");
+      //tft->fillRect(yPos, xPos, height, width, bg_color);
+      //delete[] image;
    }
    xPos = inXPos;
    yPos = inYPos;
@@ -68,6 +69,7 @@ void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t 
       image[i] = solidColor;
    }
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
+   Serial.println("Call3");
 }
 
 /******************************************************************

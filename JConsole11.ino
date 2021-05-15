@@ -32,7 +32,7 @@
 #define BOTTOM_LEFT 9
 #define LEDS 21
 
-#define ADC_MAX 4095
+#define ADC_MAX 1023
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
@@ -77,14 +77,16 @@ void setup() {
    {
       debounceTimes[i] = millis() + i;
    }
-   //int16_t height = 21;
-   //int16_t width = 24;
    int blasterIndex = 0;
-   //GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
-   GameObject gameObject(&tft, 100, 100, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   GameObject blasters[5];
-   Serial.println(sizeof(GameObject));
-   //GameObject blaster(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   int arr[2000];
+   GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   //GameObject* gameObject2 = new GameObject(&tft, 100, 150, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   //GameObject blasters[5];
+   //Serial.println(sizeof(GameObject));
+   //GameObject* blasters = new GameObject[5];
+   //blasters[0].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   //GameObject blaster = new GameObject(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   //GameObject cube(&tft, 150, 150, 10, 10, bgColor, COLOR_RED);
    gameObject.RotateRight();
    //gameObject.RotateDown();
    //gameObject.RotateDefault();
@@ -94,14 +96,14 @@ void setup() {
    unsigned long nextControlTime = 0;
    //gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
    //gameObject.SetVelocity(10.0, -30.0);
-   //blaster.SetVelocity(-20, 0);
+   //blasters[0].SetVelocity(-20, 0);
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
            gameObject.PhysicsMove();
-           //blaster.PhysicsMove();
+           //blasters[0].PhysicsMove();
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler
@@ -155,7 +157,7 @@ void setup() {
            xScaler = xScaler / (float)(ADC_MAX / 2);
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
-
+           Serial.println(analogRead(JOYSTICK_Y));
            gameObject.SetVelocity(xScaler * 20.0, yScaler * 20.0);
            nextControlTime = msTicks + 50;
        }
