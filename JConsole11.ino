@@ -69,7 +69,8 @@ void setup() {
   Serial.print("Image Format: 0x"); Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDSELFDIAG);
   Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
-  tft.fillScreen(COLOR_WHITE);
+  uint16_t bgColor = COLOR_LTGREY;
+  tft.fillScreen(bgColor);
 
    // Clear all debounce times
    for (int i = 0; i < NUM_BTNS; i++)
@@ -78,9 +79,12 @@ void setup() {
    }
    //int16_t height = 21;
    //int16_t width = 24;
-   
-   //GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, COLOR_WHITE);
-   GameObject gameObject(&tft, 100, 100, TIE_WIDTH, TIE_HEIGHT, tieFighter, COLOR_WHITE);
+   int blasterIndex = 0;
+   //GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   GameObject gameObject(&tft, 100, 100, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   GameObject blasters[5];
+   Serial.println(sizeof(GameObject));
+   //GameObject blaster(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
    gameObject.RotateRight();
    //gameObject.RotateDown();
    //gameObject.RotateDefault();
@@ -89,13 +93,15 @@ void setup() {
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
    //gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
-   gameObject.SetVelocity(10.0, -30.0);
+   //gameObject.SetVelocity(10.0, -30.0);
+   //blaster.SetVelocity(-20, 0);
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
            gameObject.PhysicsMove();
+           //blaster.PhysicsMove();
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler
@@ -119,6 +125,13 @@ void setup() {
        // Fire button
        if (debounceTimes[3] < msTicks && digitalRead(TOP_LEFT))
        {
+           // User fired
+           //blasters[blasterIndex++].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+           if (blasterIndex == 20)
+           {
+              blasterIndex = 0;
+           }
+           //blasters[blasterIndex](&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
            debounceTimes[3] = msTicks + 200; // Right now 200ms debounce time
        }
        // Top right button handler
