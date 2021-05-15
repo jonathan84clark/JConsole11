@@ -32,7 +32,7 @@
 #define BOTTOM_LEFT 9
 #define LEDS 21
 
-#define ADC_MAX 1023
+#define ADC_MAX 4095
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
@@ -78,9 +78,11 @@ void setup() {
       debounceTimes[i] = millis() + i;
    }
    int blasterIndex = 0;
-   int arr[2000];
+   //int* testArray = new int[10000];
    GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
-   //GameObject* gameObject2 = new GameObject(&tft, 100, 150, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   GameObject gameObject2(&tft, 100, 150, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   GameObject gameObject3(&tft, 100, 50, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   GameObject gameObject4(&tft, 30, 50, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
    //GameObject blasters[5];
    //Serial.println(sizeof(GameObject));
    //GameObject* blasters = new GameObject[5];
