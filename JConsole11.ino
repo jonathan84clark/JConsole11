@@ -87,7 +87,7 @@ void setup() {
    //Serial.println(sizeof(GameObject));
    //GameObject* blasters = new GameObject[5];
    //blasters[0].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-   //GameObject blaster = new GameObject(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   GameObject blaster(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
    //GameObject cube(&tft, 150, 150, 10, 10, bgColor, COLOR_RED);
    gameObject.RotateRight();
    //gameObject.RotateDown();
@@ -98,14 +98,14 @@ void setup() {
    unsigned long nextControlTime = 0;
    //gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
    //gameObject.SetVelocity(10.0, -30.0);
-   //blasters[0].SetVelocity(-20, 0);
+   blaster.SetVelocity(-20.0, 0);
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
            gameObject.PhysicsMove();
-           //blasters[0].PhysicsMove();
+           blaster.PhysicsMove();
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler

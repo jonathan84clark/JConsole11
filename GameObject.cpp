@@ -46,7 +46,7 @@ void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t 
 {
    if (active)
    {
-      Serial.println("Call0");
+      //Serial.println("Call0");
       //tft->fillRect(yPos, xPos, height, width, bg_color);
       //delete[] image;
    }
@@ -69,7 +69,6 @@ void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t 
       image[i] = solidColor;
    }
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
-   Serial.println("Call3");
 }
 
 /******************************************************************
@@ -287,6 +286,8 @@ void GameObject::PhysicsMove()
     int16_t nextPosX = 0;
     int16_t nextPosY = 0;
     physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
+    Serial.println(nextPosX);
+    Serial.println(nextPosY);
     Move(xPos - nextPosX, yPos - nextPosY);
 }
 
@@ -313,7 +314,8 @@ void GameObject::Move(int16_t deltaX, int16_t deltaY)
 
    if ((deltaX + deltaY) == 0)
    {
-      return;
+      //Serial.println("Call");
+      //return;
    }
 
    xPos += deltaX;
