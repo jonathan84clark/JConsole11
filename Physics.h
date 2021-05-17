@@ -19,6 +19,7 @@ class Physics
        void Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY);
        void SetVelocity(float inVelX, float inVelY);
        void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
+       void HandleCollision(uint8_t collision);
        //bool getEnabled() { return enabled;}
    
    private:

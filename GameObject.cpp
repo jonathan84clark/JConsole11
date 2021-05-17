@@ -257,11 +257,52 @@ void GameObject::RotateRight()
 * DESC: Checks the input game object to determine if a collision has
 * occured.
 ******************************************************************/
-uint8_t GameObject::CheckCollision(GameObject* rightObject)
+uint8_t GameObject::CheckCollision(GameObject* other)
 {
+  uint8_t collision = 0x00;
+  // Calculate all the edges
+  int myTopEdge = yPos + height;
+  int otherTopEdge = other->yPos + other->height;
+  int myRightEdge = xPos + width;
+  int otherRightEdge = other->xPos + other->width;
+  
+   // Handle x direction collisions
+   if (yPos < otherTopEdge && myTopEdge > other->yPos)
+   {
+       // Object collided with the other on its right edge
+       if (myRightEdge > other->xPos && myRightEdge < otherRightEdge)
+       {
+          //velocity.x = velocity.x * -1.0 * bounciness;
+          collision |= 0x01;
+       }
+       // Object collided with the other on its left edge
+       if (xPos < otherRightEdge && xPos > other->xPos)
+       {
+           //velocity.x = velocity.x * -1.0 * bounciness;
+          collision |= 0x01;
+       }
+   }
 
-
-   return 0x00;
+   // Handle y direction collisions
+   //if (framesSinceYCollision > 4 && xPos < otherRightEdge && myRightEdge > other->xPos)
+   if (xPos < otherRightEdge && myRightEdge > other->xPos)
+   {
+      // Hitting an object on the bottom edge
+      if (yPos < otherTopEdge && yPos > other->yPos)
+      {
+         //velocity.y = velocity.y * -1.0 * bounciness;
+         collision |= 0x02;
+      }
+      // Hitting an object on the top edge
+      if (myTopEdge > other->yPos && myTopEdge < otherTopEdge)
+      {
+         //velocity.y = velocity.y * -1.0 * bounciness;
+         collision |= 0x02;
+      }
+   }
+   physics.HandleCollision(collision);
+   
+   return collision;
 }
 
 /******************************************************************
@@ -286,8 +327,6 @@ void GameObject::PhysicsMove()
     int16_t nextPosX = 0;
     int16_t nextPosY = 0;
     physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
-    Serial.println(nextPosX);
-    Serial.println(nextPosY);
     Move(xPos - nextPosX, yPos - nextPosY);
 }
 
@@ -298,6 +337,12 @@ void GameObject::PhysicsMove()
 void GameObject::SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag)
 {
    physics.SetPhysics(inMass, inFriction, inGravity, inBouncy, inDrag);
+}
+
+void GameObject::Disable()
+{
+   active = false;
+    tft->fillRect(yPos, xPos, height, width, bg_color);
 }
 
 /*********************************************************************

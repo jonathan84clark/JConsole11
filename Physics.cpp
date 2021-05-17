@@ -8,6 +8,7 @@
 *******************************************************/
 #include <stdio.h>
 #include "Physics.h"
+#include "Arduino.h"
 
 /*********************************************************************
 * PHYSICS CONSTRUCTOR
@@ -35,6 +36,24 @@ Physics::Physics(float inMass, float inFriction, float inGravity)
    enabled = true;
    velocityX = 0.0;
    velocityY = 0.0;
+}
+
+/*********************************************************************
+* HANDLE COLLISION
+* DESC: Handles a physics collision with another object
+*********************************************************************/
+void Physics::HandleCollision(uint8_t collision)
+{
+    if (collision & 0x01)
+    {
+       Serial.println("Rev1");
+       velocityX = velocityX * -1.0 * bouncy;
+    }
+    if (collision & 0x02)
+    {
+        Serial.println("Rev2");
+        velocityY = velocityY * -1.0 * bouncy;
+    }
 }
 
 /*********************************************************************

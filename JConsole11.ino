@@ -78,27 +78,16 @@ void setup() {
       debounceTimes[i] = millis() + i;
    }
    int blasterIndex = 0;
-   //int* testArray = new int[10000];
    GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
-   GameObject gameObject2(&tft, 100, 150, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   GameObject gameObject3(&tft, 100, 50, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   GameObject gameObject4(&tft, 30, 50, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   //GameObject blasters[5];
-   //Serial.println(sizeof(GameObject));
-   //GameObject* blasters = new GameObject[5];
-   //blasters[0].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
    GameObject blaster(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-   //GameObject cube(&tft, 150, 150, 10, 10, bgColor, COLOR_RED);
    gameObject.RotateRight();
-   //gameObject.RotateDown();
-   //gameObject.RotateDefault();
-   //GameObject gameObject(&tft, 21, 24, 21, 24, newImage, COLOR_WHITE);
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
-   //gameObject.SetPhysics(10.0, 0.3, 9.81, 0.0, 0.003);
+   blaster.SetPhysics(10.0, 0.0, 0.0, 0.1, 0.0);
    //gameObject.SetVelocity(10.0, -30.0);
-   blaster.SetVelocity(-20.0, 0);
+   blaster.SetVelocity(-5.0, 0);
    while (true)
    {
        msTicks = millis();
@@ -106,6 +95,10 @@ void setup() {
        {
            gameObject.PhysicsMove();
            blaster.PhysicsMove();
+           if (gameObject2.CheckCollision(&blaster))
+           {
+              //blaster.Disable();
+           }
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler
@@ -159,7 +152,7 @@ void setup() {
            xScaler = xScaler / (float)(ADC_MAX / 2);
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
-           Serial.println(analogRead(JOYSTICK_Y));
+           //Serial.println(analogRead(JOYSTICK_Y));
            gameObject.SetVelocity(xScaler * 20.0, yScaler * 20.0);
            nextControlTime = msTicks + 50;
        }
