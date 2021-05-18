@@ -9,6 +9,7 @@
 #include "SPI.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
+#include "Solid.h"
 #include "GameObject.h"
 #include "Models.h"
 
@@ -79,13 +80,13 @@ void setup() {
    }
    int blasterIndex = 0;
    GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
-   GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   GameObject blaster(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
+   //GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
+   Solid blaster(&tft, 50, 150, 10, 10, COLOR_RED, bgColor);
    gameObject.RotateRight();
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
-   blaster.SetPhysics(10.0, 0.0, 0.0, 0.1, 0.0);
+   //blaster.SetPhysics(10.0, 0.0, 0.0, 0.9, 0.0);
    //gameObject.SetVelocity(10.0, -30.0);
    blaster.SetVelocity(-5.0, 0);
    while (true)
@@ -94,11 +95,11 @@ void setup() {
        if (nextTime < msTicks)
        {
            gameObject.PhysicsMove();
-           blaster.PhysicsMove();
-           if (gameObject2.CheckCollision(&blaster))
-           {
+           //blaster.PhysicsMove();
+           //if (gameObject2.CheckCollision(&blaster))
+           //{
               //blaster.Disable();
-           }
+           //}
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler
@@ -157,7 +158,6 @@ void setup() {
            nextControlTime = msTicks + 50;
        }
    }
-
 }
 
 

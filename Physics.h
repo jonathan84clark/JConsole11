@@ -11,6 +11,8 @@
 
 #define PIXEL_SCALER 0.5
 
+enum Rotation {UP, DOWN, LEFT, RIGHT};
+
 class Physics
 {
    public:

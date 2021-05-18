@@ -7,51 +7,30 @@
 *******************************************************/
 #include <stdio.h>
 #include "SPI.h"
-#include "GameObject.h"
+#include "Solid.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
 #include "Physics.h"
 #include "Models.h"
 
 /******************************************************************
-* GAME OBJECT DEFAULT CONSTRUCTOR
+* SOLID DEFAULT CONSTRUCTOR
 ******************************************************************/
-GameObject::GameObject()
+Solid::Solid()
 {
    prevXStopped = false;
    prevYStopped = false;
    active = false;
-   imageSize = 0;
+   //imageSize = 0;
    rotation = UP;
-   isSolid = false;
    collision_cool_down = 0;
-}
-
-/******************************************************************
-* GAME OBJECT DESTRUCTOR
-******************************************************************/
-GameObject::~GameObject()
-{
-   delete [] image;
 }
 
 /******************************************************************
 * GAME OBJECT CONSTRUCTOR
 ******************************************************************/
-GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor)
+Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
 {
-   ActivateSolid(inTft, inXPos, inYPos, inWidth, inHeight, inBgColor, solidColor);
-}
-
-void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor)
-{
-   if (active)
-   {
-      //Serial.println("Call0");
-      //tft->fillRect(yPos, xPos, height, width, bg_color);
-      //delete[] image;
-   }
-   collision_cool_down = 0;
    xPos = inXPos;
    yPos = inYPos;
    height = inHeight;
@@ -59,51 +38,15 @@ void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t 
    //original = pcolors;
    tft = inTft;
    bg_color = inBgColor;
+   color = inColor;
    prevXStopped = false;
    prevYStopped = false;
    rotation = UP;
-   imageSize = width * height;
-   image = new uint16_t[imageSize];
-   isSolid = true;
+   //isSolid = false;
    active = true;
-   for (int i = 0; i < imageSize; i++)
-   {
-      image[i] = solidColor;
-   }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
-}
-
-/******************************************************************
-* GAME OBJECT CONSTRUCTOR
-******************************************************************/
-GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors, uint16_t inBgColor)
-{
-   xPos = inXPos;
-   yPos = inYPos;
-   height = inHeight;
-   width = inWidth;
-   original = pcolors;
-   tft = inTft;
-   bg_color = inBgColor;
-   prevXStopped = false;
-   prevYStopped = false;
-   rotation = UP;
-   isSolid = false;
-   active = true;
-   imageSize = width * height;
-   image = new uint16_t[imageSize];
-   for (int i = 0; i < imageSize; i++)
-   {
-      if (original[i] == COLOR_WHITE)
-      {
-         image[i] = bg_color;
-      }
-      else
-      {
-         image[i] = original[i];
-      }
-   }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+   //tft->fillRect(yPos, xPos, height, width, color);
+   //tft->fillCircle(yPos, xPos, 6, color);
+   tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
 }
 
 
@@ -111,7 +54,7 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
 * ROTATE UP
 * DESC: Rotates the gameobject to be pointing up on the screen
 ******************************************************************/
-void GameObject::RotateUp()
+void Solid::RotateUp()
 {
     // A left/right rotation to up requires swapping the width and height
    if (rotation == LEFT || rotation == RIGHT)
@@ -120,30 +63,15 @@ void GameObject::RotateUp()
        width = height;
        height = temp;
    }
-   // Solid objects don't need pixels copied
-   if (!isSolid)
-   {
-      for (int i = 0; i < imageSize; i++)
-      {
-         if (original[i] == COLOR_WHITE)
-         {
-            image[i] = bg_color;
-         }
-         else
-         {
-            image[i] = original[i];
-         }
-      }
-   }
    rotation = UP;
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+   tft->fillRect(yPos, xPos, height, width, color);
 }
 
 /******************************************************************
 * ROTATE DOWN
 * DESC: Rotates the gameobject to be pointing down on the screen
 ******************************************************************/
-void GameObject::RotateDown()
+void Solid::RotateDown()
 {
     // A left/right rotation to up requires swapping the width and height
    if (rotation == LEFT || rotation == RIGHT)
@@ -152,41 +80,19 @@ void GameObject::RotateDown()
        width = height;
        height = temp;
    }
-   if (!isSolid)
-   {
-      int16_t readStart = imageSize - 1;
-      int16_t index = 0;
-      // 180 degree flip
-      for (int i = 0; i < width; i++)
-      {
-         for (int j = 0; j < height; j++)
-         {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[index] = bg_color;
-            }
-            else
-            {
-               image[index] = original[readStart];
-            }
-            index++;
-            readStart--;
-         }
-      }
-   }
    rotation = DOWN;
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+   tft->fillRect(yPos, xPos, height, width, color);
 }
 
 /******************************************************************
 * ROTATE LEFT
 * DESC: Rotates the gameobject left
 ******************************************************************/
-void GameObject::RotateLeft()
+void Solid::RotateLeft()
 {
    int16_t imageIndex = 0;
    int16_t readStart = 0;
-   imageIndex = imageSize - 1;
+   //imageIndex = imageSize - 1;
    // A left/right rotation to up requires swapping the width and height
    if (rotation == UP || rotation == DOWN)
    {
@@ -194,34 +100,14 @@ void GameObject::RotateLeft()
        width = height;
        height = temp;
    }
-   if (!isSolid)
-   {
-      for (int i = 0; i < width; i++)
-      {
-         readStart = i;
-         for (int j = 0; j < height; j++)
-         {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[imageIndex] = bg_color;
-            }
-            else
-            {
-               image[imageIndex] = original[readStart];
-            }
-            imageIndex--;
-            readStart += width;
-         }
-      }
-   }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+    tft->fillRect(yPos, xPos, height, width, color);
 }
 
 /******************************************************************
 * ROTATE RIGHT
 * DESC: Rotates the gameobject right
 ******************************************************************/
-void GameObject::RotateRight()
+void Solid::RotateRight()
 {
    int16_t imageIndex = 0;
    int16_t readStart = 0;
@@ -231,27 +117,7 @@ void GameObject::RotateRight()
        width = height;
        height = temp;
    }
-   if (!isSolid)
-   {
-      for (int i = 0; i < width; i++)
-      {
-         readStart = i;
-         for (int j = 0; j < height; j++)
-         {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[imageIndex] = bg_color;
-            }
-            else
-            {
-               image[imageIndex] = original[readStart];
-            }
-            imageIndex++;
-            readStart += width;
-         }
-      }
-   }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+    tft->fillRect(yPos, xPos, height, width, color);
 }
 
 /******************************************************************
@@ -259,7 +125,7 @@ void GameObject::RotateRight()
 * DESC: Checks the input game object to determine if a collision has
 * occured.
 ******************************************************************/
-uint8_t GameObject::CheckCollision(GameObject* other)
+uint8_t Solid::CheckCollision(Solid* other)
 {
   if (collision_cool_down > 0)
   {
@@ -327,7 +193,7 @@ uint8_t GameObject::CheckCollision(GameObject* other)
 * SET VELOCITY
 * DESC: Sets the velocity of the input gameobject
 ******************************************************************/
-void GameObject::SetVelocity(float inXVelocity, float inYVelocity)
+void Solid::SetVelocity(float inXVelocity, float inYVelocity)
 {
    physics.SetVelocity(inXVelocity, inYVelocity);
 }
@@ -336,7 +202,7 @@ void GameObject::SetVelocity(float inXVelocity, float inYVelocity)
 * PHYSICS MOVE
 * DESC: Handles moving the gameobject based on ~newtonian physics
 *********************************************************************/
-void GameObject::PhysicsMove()
+void Solid::PhysicsMove()
 {
     if (!active)
     {
@@ -353,12 +219,12 @@ void GameObject::PhysicsMove()
 * SET PHYSICS
 * DESC: Handles moving the gameobject.
 *********************************************************************/
-void GameObject::SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag)
+void Solid::SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag)
 {
    physics.SetPhysics(inMass, inFriction, inGravity, inBouncy, inDrag);
 }
 
-void GameObject::Disable()
+void Solid::Disable()
 {
    active = false;
     tft->fillRect(yPos, xPos, height, width, bg_color);
@@ -368,7 +234,7 @@ void GameObject::Disable()
 * MOVE
 * DESC: Handles moving the gameobject.
 *********************************************************************/
-uint8_t GameObject::Move(int16_t deltaX, int16_t deltaY)
+uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
 {
    int16_t prevX = xPos;
    int16_t prevY = yPos;
@@ -461,7 +327,7 @@ uint8_t GameObject::Move(int16_t deltaX, int16_t deltaY)
    {
       tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, bg_color);
    }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+    tft->fillRect(yPos, xPos, height, width, color);
 
    return walls;
 }

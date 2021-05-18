@@ -44,14 +44,16 @@ Physics::Physics(float inMass, float inFriction, float inGravity)
 *********************************************************************/
 void Physics::HandleCollision(uint8_t collision)
 {
+    if (!enabled)
+    {
+        return;
+    }
     if (collision & 0x01)
     {
-       Serial.println("Rev1");
        velocityX = velocityX * -1.0 * bouncy;
     }
     if (collision & 0x02)
     {
-        Serial.println("Rev2");
         velocityY = velocityY * -1.0 * bouncy;
     }
 }
@@ -63,6 +65,12 @@ void Physics::HandleCollision(uint8_t collision)
 *********************************************************************/
 void Physics::Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY)
 {
+   //if (!enabled)
+   //{
+   //   *nextPosY = posY;
+   //   *nextPosX = posX;
+   //   return;
+   //}
    //Calculate velocity due to gravity
    velocityY = velocityY + gravity * 0.3;
    velocityX = velocityX - (drag * velocityX); // Drag is proportional to velocity, here we assume it's linear
