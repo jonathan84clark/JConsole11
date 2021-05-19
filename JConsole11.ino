@@ -79,22 +79,29 @@ void setup() {
       debounceTimes[i] = millis() + i;
    }
    int blasterIndex = 0;
-   GameObject gameObject(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   GameObject player(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    //GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
-   Solid blaster(&tft, 50, 150, 10, 10, COLOR_RED, bgColor);
-   gameObject.RotateRight();
+   Solid blasters[10];
+   //Solid blaster(&tft, 50, 150, 10, 10, COLOR_RED, bgColor);
+   player.RotateRight();
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
+   int16_t firePoint = 0;
+   unsigned int fireDebounce = 0;
    //blaster.SetPhysics(10.0, 0.0, 0.0, 0.9, 0.0);
    //gameObject.SetVelocity(10.0, -30.0);
-   blaster.SetVelocity(-5.0, 0);
+   //blaster.SetVelocity(-5.0, 0);
    while (true)
    {
        msTicks = millis();
        if (nextTime < msTicks)
        {
-           gameObject.PhysicsMove();
+           player.PhysicsMove();
+           for (int i = 0; i < 10; i++)
+           {
+              blasters[i].PhysicsMove();
+           }
            //blaster.PhysicsMove();
            //if (gameObject2.CheckCollision(&blaster))
            //{
@@ -121,16 +128,32 @@ void setup() {
            debounceTimes[2] = msTicks + 200; // Right now 200ms debounce time
        }
        // Fire button
-       if (debounceTimes[3] < msTicks && digitalRead(TOP_LEFT))
+       if (fireDebounce < msTicks && digitalRead(TOP_LEFT) == 0)
        {
+           Serial.println("Fire");
            // User fired
+           int16_t xFirePos = player.getXPos() + 3;
+           int16_t yFirePos = player.getYPos();
+
+           if (firePoint == 1)
+           {
+               yFirePos = yFirePos + player.getHeight();
+           }
+           firePoint++;
+           if (firePoint == 2)
+           {
+              firePoint = 0;
+           }
+           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
+           blasters[blasterIndex].SetVelocity(-40.0, 0);
+           blasterIndex++;
            //blasters[blasterIndex++].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-           if (blasterIndex == 20)
+           if (blasterIndex == 10)
            {
               blasterIndex = 0;
            }
            //blasters[blasterIndex](&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-           debounceTimes[3] = msTicks + 200; // Right now 200ms debounce time
+           fireDebounce = msTicks + 100; // Right now 200ms debounce time
        }
        // Top right button handler
        if (debounceTimes[4] < msTicks && digitalRead(TOP_RIGHT))
@@ -154,7 +177,17 @@ void setup() {
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
            //Serial.println(analogRead(JOYSTICK_Y));
-           gameObject.SetVelocity(xScaler * 20.0, yScaler * 20.0);
+           if (xScaler > 0.2)
+           {
+              Serial.println("right");
+              player.RotateLeft();
+           }
+           else if (xScaler < -0.2)
+           {
+              Serial.println("Left");
+              player.RotateRight();
+           }
+           player.SetVelocity(xScaler * 20.0, yScaler * 20.0);
            nextControlTime = msTicks + 50;
        }
    }

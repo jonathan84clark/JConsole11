@@ -187,6 +187,10 @@ void GameObject::RotateLeft()
    int16_t imageIndex = 0;
    int16_t readStart = 0;
    imageIndex = imageSize - 1;
+   if (rotation == LEFT)
+   {
+      return;
+   }
    // A left/right rotation to up requires swapping the width and height
    if (rotation == UP || rotation == DOWN)
    {
@@ -214,6 +218,7 @@ void GameObject::RotateLeft()
          }
       }
    }
+   rotation = LEFT;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -225,6 +230,10 @@ void GameObject::RotateRight()
 {
    int16_t imageIndex = 0;
    int16_t readStart = 0;
+   if (rotation == RIGHT)
+   {
+      return;
+   }
    if (rotation == UP || rotation == DOWN)
    {
        int16_t temp = width;
@@ -251,6 +260,7 @@ void GameObject::RotateRight()
          }
       }
    }
+   rotation = RIGHT;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 

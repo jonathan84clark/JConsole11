@@ -44,9 +44,29 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    rotation = UP;
    //isSolid = false;
    active = true;
-   //tft->fillRect(yPos, xPos, height, width, color);
+   tft->fillRect(yPos, xPos, height, width, color);
    //tft->fillCircle(yPos, xPos, 6, color);
-   tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
+   //tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
+}
+
+void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
+{
+   xPos = inXPos;
+   yPos = inYPos;
+   height = inHeight;
+   width = inWidth;
+   //original = pcolors;
+   tft = inTft;
+   bg_color = inBgColor;
+   color = inColor;
+   prevXStopped = false;
+   prevYStopped = false;
+   rotation = UP;
+   //isSolid = false;
+   active = true;
+   tft->fillRect(yPos, xPos, height, width, color);
+   //tft->fillCircle(yPos, xPos, 6, color);
+   //tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
 }
 
 
