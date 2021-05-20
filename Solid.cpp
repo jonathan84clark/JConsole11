@@ -42,7 +42,6 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    prevXStopped = false;
    prevYStopped = false;
    rotation = UP;
-   //isSolid = false;
    active = true;
    tft->fillRect(yPos, xPos, height, width, color);
    //tft->fillCircle(yPos, xPos, 6, color);
@@ -67,6 +66,12 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    tft->fillRect(yPos, xPos, height, width, color);
    //tft->fillCircle(yPos, xPos, 6, color);
    //tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
+}
+
+void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)
+{
+    health = inHealth;
+    disableOnHit = inDisableOnHit;
 }
 
 
@@ -232,6 +237,11 @@ void Solid::PhysicsMove()
     int16_t nextPosY = 0;
     physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
     uint8_t collisions = Move(xPos - nextPosX, yPos - nextPosY);
+    if (disableOnHit && collisions) // Object hit a wall
+    {
+        Disable();
+        return;
+    }
     physics.HandleCollision(collisions);
 }
 

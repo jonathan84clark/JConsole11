@@ -23,8 +23,8 @@ GameObject::GameObject()
    active = false;
    imageSize = 0;
    rotation = UP;
-   isSolid = false;
    collision_cool_down = 0;
+   bg_color = 0;
 }
 
 /******************************************************************
@@ -33,44 +33,6 @@ GameObject::GameObject()
 GameObject::~GameObject()
 {
    delete [] image;
-}
-
-/******************************************************************
-* GAME OBJECT CONSTRUCTOR
-******************************************************************/
-GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor)
-{
-   ActivateSolid(inTft, inXPos, inYPos, inWidth, inHeight, inBgColor, solidColor);
-}
-
-void GameObject::ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor)
-{
-   if (active)
-   {
-      //Serial.println("Call0");
-      //tft->fillRect(yPos, xPos, height, width, bg_color);
-      //delete[] image;
-   }
-   collision_cool_down = 0;
-   xPos = inXPos;
-   yPos = inYPos;
-   height = inHeight;
-   width = inWidth;
-   //original = pcolors;
-   tft = inTft;
-   bg_color = inBgColor;
-   prevXStopped = false;
-   prevYStopped = false;
-   rotation = UP;
-   imageSize = width * height;
-   image = new uint16_t[imageSize];
-   isSolid = true;
-   active = true;
-   for (int i = 0; i < imageSize; i++)
-   {
-      image[i] = solidColor;
-   }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
 /******************************************************************
@@ -88,7 +50,6 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    prevXStopped = false;
    prevYStopped = false;
    rotation = UP;
-   isSolid = false;
    active = true;
    imageSize = width * height;
    image = new uint16_t[imageSize];
@@ -121,18 +82,15 @@ void GameObject::RotateUp()
        height = temp;
    }
    // Solid objects don't need pixels copied
-   if (!isSolid)
+   for (int i = 0; i < imageSize; i++)
    {
-      for (int i = 0; i < imageSize; i++)
+      if (original[i] == COLOR_WHITE)
       {
-         if (original[i] == COLOR_WHITE)
-         {
-            image[i] = bg_color;
-         }
-         else
-         {
-            image[i] = original[i];
-         }
+         image[i] = bg_color;
+      }
+      else
+      {
+         image[i] = original[i];
       }
    }
    rotation = UP;
@@ -152,26 +110,23 @@ void GameObject::RotateDown()
        width = height;
        height = temp;
    }
-   if (!isSolid)
+   int16_t readStart = imageSize - 1;
+   int16_t index = 0;
+   // 180 degree flip
+   for (int i = 0; i < width; i++)
    {
-      int16_t readStart = imageSize - 1;
-      int16_t index = 0;
-      // 180 degree flip
-      for (int i = 0; i < width; i++)
+      for (int j = 0; j < height; j++)
       {
-         for (int j = 0; j < height; j++)
+         if (original[readStart] == COLOR_WHITE)
          {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[index] = bg_color;
-            }
-            else
-            {
-               image[index] = original[readStart];
-            }
-            index++;
-            readStart--;
+            image[index] = bg_color;
          }
+         else
+         {
+            image[index] = original[readStart];
+         }
+         index++;
+         readStart--;
       }
    }
    rotation = DOWN;
@@ -198,24 +153,21 @@ void GameObject::RotateLeft()
        width = height;
        height = temp;
    }
-   if (!isSolid)
+   for (int i = 0; i < width; i++)
    {
-      for (int i = 0; i < width; i++)
+      readStart = i;
+      for (int j = 0; j < height; j++)
       {
-         readStart = i;
-         for (int j = 0; j < height; j++)
+         if (original[readStart] == COLOR_WHITE)
          {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[imageIndex] = bg_color;
-            }
-            else
-            {
-               image[imageIndex] = original[readStart];
-            }
-            imageIndex--;
-            readStart += width;
+            image[imageIndex] = bg_color;
          }
+         else
+         {
+            image[imageIndex] = original[readStart];
+         }
+         imageIndex--;
+         readStart += width;
       }
    }
    rotation = LEFT;
@@ -240,24 +192,21 @@ void GameObject::RotateRight()
        width = height;
        height = temp;
    }
-   if (!isSolid)
+   for (int i = 0; i < width; i++)
    {
-      for (int i = 0; i < width; i++)
+      readStart = i;
+      for (int j = 0; j < height; j++)
       {
-         readStart = i;
-         for (int j = 0; j < height; j++)
+         if (original[readStart] == COLOR_WHITE)
          {
-            if (original[readStart] == COLOR_WHITE)
-            {
-               image[imageIndex] = bg_color;
-            }
-            else
-            {
-               image[imageIndex] = original[readStart];
-            }
-            imageIndex++;
-            readStart += width;
+            image[imageIndex] = bg_color;
          }
+         else
+         {
+            image[imageIndex] = original[readStart];
+         }
+         imageIndex++;
+         readStart += width;
       }
    }
    rotation = RIGHT;
@@ -350,6 +299,7 @@ void GameObject::PhysicsMove()
 {
     if (!active)
     {
+        Serial.println("No physics move");
        return; // Inactive objects don't do anything
     }
     int16_t nextPosX = 0;

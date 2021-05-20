@@ -102,11 +102,6 @@ void setup() {
            {
               blasters[i].PhysicsMove();
            }
-           //blaster.PhysicsMove();
-           //if (gameObject2.CheckCollision(&blaster))
-           //{
-              //blaster.Disable();
-           //}
            nextTime = msTicks + 50;
        }
        // Joystick/ Menu button handler
@@ -130,10 +125,10 @@ void setup() {
        // Fire button
        if (fireDebounce < msTicks && digitalRead(TOP_LEFT) == 0)
        {
-           Serial.println("Fire");
            // User fired
-           int16_t xFirePos = player.getXPos() + 3;
+           int16_t xFirePos = player.getXPos() + 5.0;
            int16_t yFirePos = player.getYPos();
+           float shotVelocity = -40.0;
 
            if (firePoint == 1)
            {
@@ -144,10 +139,16 @@ void setup() {
            {
               firePoint = 0;
            }
+
+           if (player.getRotation() == LEFT)
+           {
+               shotVelocity *= -1.0;
+               xFirePos = player.getXPos() - 5.0;
+           }
            blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(-40.0, 0);
+           blasters[blasterIndex].SetVelocity(shotVelocity, 0);
+           blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
-           //blasters[blasterIndex++].ActivateSolid(&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
            if (blasterIndex == 10)
            {
               blasterIndex = 0;
@@ -179,12 +180,12 @@ void setup() {
            //Serial.println(analogRead(JOYSTICK_Y));
            if (xScaler > 0.2)
            {
-              Serial.println("right");
+              //Serial.println("right");
               player.RotateLeft();
            }
            else if (xScaler < -0.2)
            {
-              Serial.println("Left");
+              //Serial.println("Left");
               player.RotateRight();
            }
            player.SetVelocity(xScaler * 20.0, yScaler * 20.0);

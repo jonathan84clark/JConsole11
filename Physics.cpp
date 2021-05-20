@@ -21,6 +21,7 @@ Physics::Physics()
    mass = 0.0;
    bouncy = 0.0;
    gravity = 0.0;
+   drag = 0.0;
    enabled = false;
 }
 
@@ -34,6 +35,7 @@ Physics::Physics(float inMass, float inFriction, float inGravity)
    gravity = inGravity;
    bouncy = 0.0;
    enabled = true;
+   drag = 0.0;
    velocityX = 0.0;
    velocityY = 0.0;
 }
@@ -65,12 +67,6 @@ void Physics::HandleCollision(uint8_t collision)
 *********************************************************************/
 void Physics::Compute(int16_t posX, int16_t posY, int16_t* nextPosX, int16_t* nextPosY)
 {
-   //if (!enabled)
-   //{
-   //   *nextPosY = posY;
-   //   *nextPosX = posX;
-   //   return;
-   //}
    //Calculate velocity due to gravity
    velocityY = velocityY + gravity * 0.3;
    velocityX = velocityX - (drag * velocityX); // Drag is proportional to velocity, here we assume it's linear

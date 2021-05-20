@@ -28,14 +28,13 @@ class GameObject
       void SetVelocity(float inXVelocity, float inYVelocity);
       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
       uint8_t CheckCollision(GameObject* other);
-      void ActivateSolid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor);
       void Disable();
       GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t* pcolors, uint16_t inBgColor);
-      GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inBgColor, uint16_t solidColor);
       int16_t getXPos() { return xPos; }
       int16_t getYPos() { return yPos; }
       int16_t getWidth() { return width; }
       int16_t getHeight() { return height; }
+      Rotation getRotation() { return rotation; }
    
    private:
       Adafruit_ILI9341 *tft;
@@ -52,7 +51,6 @@ class GameObject
       Rotation rotation;
       bool prevXStopped;
       bool prevYStopped;
-      bool isSolid;
       bool active;
 };
 
