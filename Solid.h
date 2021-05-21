@@ -20,7 +20,7 @@ class Solid
       Solid();
       Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor);
       uint8_t Move(int16_t deltaX, int16_t deltaY);
-      void PhysicsMove();
+      void PhysicsMove(unsigned long milliseconds);
       void RotateDown();
       void RotateUp();
       void RotateLeft();
@@ -31,6 +31,12 @@ class Solid
       uint8_t CheckCollision(Solid* other);
       void Disable();
       void Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor);
+      bool getActive() { return active;}
+      unsigned long getNextPhysicsTime() { return nextPhysicsTime;}
+      int16_t getHeight() { return height; }
+      int16_t getWidth() { return width; }
+      int16_t getXPos() { return xPos; }
+      int16_t getYPos() { return yPos; }
    
    private:
       Adafruit_ILI9341 *tft;
@@ -38,6 +44,7 @@ class Solid
       uint8_t collision_cool_down;
       uint16_t color;
       uint16_t bg_color;
+      unsigned long nextPhysicsTime;
       int16_t xPos;
       int16_t yPos;
       int16_t width;

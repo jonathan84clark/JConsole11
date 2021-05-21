@@ -21,6 +21,7 @@ Solid::Solid()
    prevXStopped = false;
    prevYStopped = false;
    active = false;
+   nextPhysicsTime = 0;
    //imageSize = 0;
    rotation = UP;
    collision_cool_down = 0;
@@ -42,6 +43,7 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    prevXStopped = false;
    prevYStopped = false;
    rotation = UP;
+   nextPhysicsTime = 0;
    active = true;
    tft->fillRect(yPos, xPos, height, width, color);
    //tft->fillCircle(yPos, xPos, 6, color);
@@ -157,6 +159,7 @@ uint8_t Solid::CheckCollision(Solid* other)
      collision_cool_down--;
      return 0x00;
   }
+
   uint8_t collision = 0x00;
   uint8_t otherCollision = 0x00;
   // Calculate all the edges
@@ -164,7 +167,7 @@ uint8_t Solid::CheckCollision(Solid* other)
   int otherTopEdge = other->yPos + other->height;
   int myRightEdge = xPos + width;
   int otherRightEdge = other->xPos + other->width;
-  
+
    // Handle x direction collisions
    if (yPos < otherTopEdge && myTopEdge > other->yPos)
    {
@@ -208,10 +211,11 @@ uint8_t Solid::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
    }
-   physics.HandleCollision(collision);
-   other->physics.HandleCollision(collision);
+   //physics.HandleCollision(collision);
+   //other->physics.HandleCollision(collision);
    
    return collision;
+   //return 0x00;
 }
 
 /******************************************************************
@@ -227,7 +231,7 @@ void Solid::SetVelocity(float inXVelocity, float inYVelocity)
 * PHYSICS MOVE
 * DESC: Handles moving the gameobject based on ~newtonian physics
 *********************************************************************/
-void Solid::PhysicsMove()
+void Solid::PhysicsMove(unsigned long milliseconds)
 {
     if (!active)
     {
@@ -243,6 +247,7 @@ void Solid::PhysicsMove()
         return;
     }
     physics.HandleCollision(collisions);
+    nextPhysicsTime = milliseconds + 50;
 }
 
 /*********************************************************************

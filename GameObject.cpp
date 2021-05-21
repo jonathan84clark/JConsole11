@@ -12,6 +12,7 @@
 #include "Adafruit_ILI9341.h"
 #include "Physics.h"
 #include "Models.h"
+#include "Solid.h"
 
 /******************************************************************
 * GAME OBJECT DEFAULT CONSTRUCTOR
@@ -211,6 +212,75 @@ void GameObject::RotateRight()
    }
    rotation = RIGHT;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
+}
+
+/******************************************************************
+* CHECK COLLISION
+* DESC: Checks the input game object to determine if a collision has
+* occured.
+******************************************************************/
+uint8_t GameObject::CheckCollision(Solid* other)
+{
+  if (collision_cool_down > 0)
+  {
+     collision_cool_down--;
+     return 0x00;
+  }
+  uint8_t collision = 0x00;
+  uint8_t otherCollision = 0x00;
+  // Calculate all the edges
+  int myTopEdge = yPos + height;
+  int otherTopEdge = other->getYPos() + other->getHeight();
+  int myRightEdge = xPos + width;
+  int otherRightEdge = other->getXPos() + other->getWidth();
+  
+   // Handle x direction collisions
+   if (yPos < otherTopEdge && myTopEdge > other->getYPos())
+   {
+       // Object collided with the other on its right edge
+       if (myRightEdge > other->getXPos() && myRightEdge < otherRightEdge)
+       {
+          // Newtons 3rd law
+          collision |= 0x01;
+          otherCollision |= 0x02;
+          collision_cool_down = 10;
+       }
+       // Object collided with the other on its left edge
+       if (xPos < otherRightEdge && xPos > other->getXPos())
+       {
+          // Newtons 3rd law
+          collision |= 0x01;
+          otherCollision |= 0x02;
+          collision_cool_down = 10;
+       }
+   }
+
+   // Handle y direction collisions
+   if (xPos < otherRightEdge && myRightEdge > other->getXPos())
+   {
+      // Hitting an object on the bottom edge
+      if (yPos < otherTopEdge && yPos > other->getYPos())
+      {
+         // Newtons 3rd law
+         collision |= 0x02;
+         otherCollision |= 0x01;
+         
+         collision_cool_down = 10;
+      }
+      // Hitting an object on the top edge
+      if (myTopEdge > other->getYPos() && myTopEdge < otherTopEdge)
+      {
+         // Newtons 3rd law
+         collision |= 0x02;
+         otherCollision |= 0x01;
+         
+         collision_cool_down = 10;
+      }
+   }
+   //physics.HandleCollision(collision);
+   //other->physics.HandleCollision(collision);
+   
+   return collision;
 }
 
 /******************************************************************
