@@ -26,6 +26,8 @@ GameObject::GameObject()
    rotation = UP;
    collision_cool_down = 0;
    bg_color = 0;
+   original = NULL;
+   image = NULL;
 }
 
 /******************************************************************
@@ -33,7 +35,12 @@ GameObject::GameObject()
 ******************************************************************/
 GameObject::~GameObject()
 {
-   delete [] image;
+   if (image != NULL)
+   {
+      delete [] image;
+   }
+   image = NULL;
+   original = NULL;
 }
 
 /******************************************************************
@@ -50,7 +57,7 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
    bg_color = inBgColor;
    prevXStopped = false;
    prevYStopped = false;
-   rotation = UP;
+   rotation = RIGHT;
    active = true;
    imageSize = width * height;
    image = new uint16_t[imageSize];
@@ -65,7 +72,7 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
          image[i] = original[i];
       }
    }
-   tft->drawRGBBitmap(yPos, xPos, image, height, width);
+   //tft->drawRGBBitmap(xPos, xPos, image, height, width);
 }
 
 
@@ -73,10 +80,14 @@ GameObject::GameObject(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, 
 * ROTATE UP
 * DESC: Rotates the gameobject to be pointing up on the screen
 ******************************************************************/
-void GameObject::RotateUp()
+void GameObject::RotateRight()
 {
+    if (rotation == RIGHT)
+    {
+       return;
+    }
     // A left/right rotation to up requires swapping the width and height
-   if (rotation == LEFT || rotation == RIGHT)
+   if (rotation == UP || rotation == DOWN)
    {
        int16_t temp = width;
        width = height;
@@ -94,7 +105,7 @@ void GameObject::RotateUp()
          image[i] = original[i];
       }
    }
-   rotation = UP;
+   rotation = RIGHT;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -102,10 +113,14 @@ void GameObject::RotateUp()
 * ROTATE DOWN
 * DESC: Rotates the gameobject to be pointing down on the screen
 ******************************************************************/
-void GameObject::RotateDown()
+void GameObject::RotateLeft()
 {
+   if (rotation == LEFT)
+   {
+      return;
+   }
     // A left/right rotation to up requires swapping the width and height
-   if (rotation == LEFT || rotation == RIGHT)
+   if (rotation == UP || rotation == DOWN)
    {
        int16_t temp = width;
        width = height;
@@ -130,7 +145,7 @@ void GameObject::RotateDown()
          readStart--;
       }
    }
-   rotation = DOWN;
+   rotation = LEFT;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -138,17 +153,17 @@ void GameObject::RotateDown()
 * ROTATE LEFT
 * DESC: Rotates the gameobject left
 ******************************************************************/
-void GameObject::RotateLeft()
+void GameObject::RotateDown()
 {
    int16_t imageIndex = 0;
    int16_t readStart = 0;
    imageIndex = imageSize - 1;
-   if (rotation == LEFT)
+   if (rotation == DOWN)
    {
       return;
    }
    // A left/right rotation to up requires swapping the width and height
-   if (rotation == UP || rotation == DOWN)
+   if (rotation == LEFT || rotation == RIGHT)
    {
        int16_t temp = width;
        width = height;
@@ -171,7 +186,7 @@ void GameObject::RotateLeft()
          readStart += width;
       }
    }
-   rotation = LEFT;
+   rotation = DOWN;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -179,15 +194,15 @@ void GameObject::RotateLeft()
 * ROTATE RIGHT
 * DESC: Rotates the gameobject right
 ******************************************************************/
-void GameObject::RotateRight()
+void GameObject::RotateUp()
 {
    int16_t imageIndex = 0;
    int16_t readStart = 0;
-   if (rotation == RIGHT)
+   if (rotation == UP)
    {
       return;
    }
-   if (rotation == UP || rotation == DOWN)
+   if (rotation == LEFT || rotation == RIGHT)
    {
        int16_t temp = width;
        width = height;
@@ -210,7 +225,7 @@ void GameObject::RotateRight()
          readStart += width;
       }
    }
-   rotation = RIGHT;
+   rotation = UP;
    tft->drawRGBBitmap(yPos, xPos, image, height, width);
 }
 
@@ -375,7 +390,7 @@ void GameObject::PhysicsMove()
     int16_t nextPosX = 0;
     int16_t nextPosY = 0;
     physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
-    uint8_t collisions = Move(xPos - nextPosX, yPos - nextPosY);
+    uint8_t collisions = Move(yPos - nextPosY, xPos - nextPosX);
     physics.HandleCollision(collisions);
 }
 

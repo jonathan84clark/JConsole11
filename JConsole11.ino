@@ -86,17 +86,17 @@ void setup() {
    int numBlasters = 20;
    int blasterIndex = 0;
    
-   GameObject player(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   //GameObject player(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
 
-   player.~GameObject();
+   //player.~GameObject();
 
-   GameObject player2(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   GameObject player2(&tft, 10, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
 
    //GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
    Solid blasters[numBlasters];
    Solid blocks[numBlocks];
    //Solid blaster(&tft, 50, 150, 10, 10, COLOR_RED, bgColor);
-   player2.RotateRight();
+   //player2.RotateRight();
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
@@ -105,13 +105,13 @@ void setup() {
    unsigned int nextBlockTime = 0;
    int colorIndex = 0;
    int16_t startYPos = 10;
-
-   //for (int i = 0; i < 5; i++)
-   //{
-       //blocks[i].Activate(&tft, 230, startYPos, 10, 10, COLOR_BLUE, bgColor);
-       //blocks[i].SetVelocity(5.0, 0);
-       //startYPos += 15;
-   //}
+   tft.setRotation(1);
+   //tft.setRotation(0);
+   tft.setCursor(0, 0);
+   tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(1);
+   tft.print("Score: ");
+   tft.print("15");
+   
    while (true)
    {
        msTicks = millis();
@@ -280,7 +280,7 @@ void setup() {
               //Serial.println("Left");
               player2.RotateRight();
            }
-           player2.SetVelocity(xScaler * 20.0, yScaler * 20.0);
+           player2.SetVelocity(xScaler * 20.0, yScaler * -20.0);
            nextControlTime = msTicks + 50;
        }
    }
