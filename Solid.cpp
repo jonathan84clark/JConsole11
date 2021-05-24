@@ -287,10 +287,10 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
        yPos = 0;
        walls |= 0x02;
    }
-   else if ((yPos + height) > 240)
+   else if ((yPos + height) > 320)
    {
        yMoveStopped = 2;
-       yPos = 240 - height;
+       yPos = 320 - height;
        walls |= 0x02;
    }
    else
@@ -304,10 +304,10 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       xPos = 0;
       walls |= 0x01;
    }
-   else if ((xPos + width) > 320)
+   else if ((xPos + width) > 240)
    {
       xMoveStopped = 2;
-      xPos = 320 - width;
+      xPos = 240 - width;
       walls |= 0x01;
    }
    else

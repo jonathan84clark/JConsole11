@@ -63,6 +63,7 @@ void setup() {
  
   tft.begin(20000000);
 
+  /*
   // read diagnostics (optional but can help debug problems)
   uint8_t x = tft.readcommand8(ILI9341_RDMODE);
   Serial.print("Display Power Mode: 0x"); Serial.println(x, HEX);
@@ -74,6 +75,7 @@ void setup() {
   Serial.print("Image Format: 0x"); Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDSELFDIAG);
   Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
+  */
   uint16_t bgColor = COLOR_SKYBLUE;
   tft.fillScreen(bgColor);
 
@@ -160,8 +162,8 @@ void setup() {
                if (!blocks[i].getActive())
                {
                   int16_t randomY = random(230);
-                  blocks[i].Activate(&tft, 300, randomY, 12, 12, COLOR_BLACK, bgColor);
-                  blocks[i].SetVelocity(5.0, 0);
+                  blocks[i].Activate(&tft, randomY, 300, 12, 12, COLOR_BLACK, bgColor);
+                  blocks[i].SetVelocity(0.0, 5.0);
                   blocks[i].SetBehavior(true, 0);
                   break;
                }
@@ -190,8 +192,8 @@ void setup() {
        if (fireDebounce < msTicks && digitalRead(TOP_LEFT) == 0)
        {
            // User fired
-           int16_t xFirePos = player2.getXPos() + 5.0;
-           int16_t yFirePos = player2.getYPos();
+           int16_t xFirePos = player2.getYPos() + 5.0;
+           int16_t yFirePos = player2.getXPos();
            float shotVelocity = -40.0;
 
            if (firePoint == 1)
@@ -207,10 +209,10 @@ void setup() {
            if (player2.getRotation() == LEFT)
            {
                shotVelocity *= -1.0;
-               xFirePos = player2.getXPos() - 5.0;
+               xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(shotVelocity, 0);
+           blasters[blasterIndex].Activate(&tft, yFirePos, xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].SetVelocity(0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
            if (blasterIndex == numBlasters)
@@ -224,25 +226,25 @@ void setup() {
        if (fireDebounce < msTicks && digitalRead(TOP_RIGHT) == 0)
        {
            // User fired
-           int16_t xFirePos = player2.getXPos() + 5.0;
-           int16_t yFirePos = player2.getYPos();
+           int16_t xFirePos = player2.getYPos() + 5.0;
+           int16_t yFirePos = player2.getXPos();
            float shotVelocity = -40.0;
 
            if (player2.getRotation() == LEFT)
            {
                shotVelocity *= -1.0;
-               xFirePos = player2.getXPos() - 5.0;
+               xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(shotVelocity, -4.0);
+           blasters[blasterIndex].Activate(&tft, yFirePos, xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].SetVelocity(-4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
            if (blasterIndex == numBlasters)
            {
               blasterIndex = 0;
            }
-           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos + player2.getHeight(), 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(shotVelocity, 4.0);
+           blasters[blasterIndex].Activate(&tft, yFirePos + player2.getHeight(), xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].SetVelocity(4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
            if (blasterIndex == numBlasters)
