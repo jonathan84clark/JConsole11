@@ -35,7 +35,7 @@
 
 #define ADC_MAX 4095
 
-//uint16_t randomColors[] = {COLOR_BLUE, COLOR_RED, COLOR_MAGENTA, COLOR_ORANGE, COLOR_FORESTGREEN, COLOR_DRKGREY};
+static uint16_t randomColors[] = {COLOR_BLUE, COLOR_RED, COLOR_MAGENTA, COLOR_ORANGE, COLOR_FORESTGREEN, COLOR_DRKGREY};
 
 Solid blasters[20];
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
@@ -63,19 +63,6 @@ void setup() {
  
   tft.begin(20000000);
 
-  /*
-  // read diagnostics (optional but can help debug problems)
-  uint8_t x = tft.readcommand8(ILI9341_RDMODE);
-  Serial.print("Display Power Mode: 0x"); Serial.println(x, HEX);
-  x = tft.readcommand8(ILI9341_RDMADCTL);
-  Serial.print("MADCTL Mode: 0x"); Serial.println(x, HEX);
-  x = tft.readcommand8(ILI9341_RDPIXFMT);
-  Serial.print("Pixel Format: 0x"); Serial.println(x, HEX);
-  x = tft.readcommand8(ILI9341_RDIMGFMT);
-  Serial.print("Image Format: 0x"); Serial.println(x, HEX);
-  x = tft.readcommand8(ILI9341_RDSELFDIAG);
-  Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX); 
-  */
   uint16_t bgColor = COLOR_SKYBLUE;
   tft.fillScreen(bgColor);
 
@@ -87,18 +74,12 @@ void setup() {
    int numBlocks = 10;
    int numBlasters = 20;
    int blasterIndex = 0;
-   
-   //GameObject player(&tft, 100, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
-
-   //player.~GameObject();
 
    GameObject player2(&tft, 10, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
 
-   //GameObject gameObject2(&tft, 200, 140, TIE_WIDTH, TIE_HEIGHT, tieFighter, bgColor);
    Solid blasters[numBlasters];
    Solid blocks[numBlocks];
-   //Solid blaster(&tft, 50, 150, 10, 10, COLOR_RED, bgColor);
-   //player2.RotateRight();
+
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
    unsigned long nextControlTime = 0;
@@ -107,12 +88,14 @@ void setup() {
    unsigned int nextBlockTime = 0;
    int colorIndex = 0;
    int16_t startYPos = 10;
+   unsigned int score = 0;
    tft.setRotation(1);
-   //tft.setRotation(0);
-   tft.setCursor(0, 0);
-   tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(1);
+   tft.setCursor(2, 2);
+   tft.setTextColor(ILI9341_BLUE);  
+   tft.setTextSize(2);
    tft.print("Score: ");
-   tft.print("15");
+   tft.setCursor(75, 2);
+   tft.print(score);
    
    while (true)
    {
@@ -151,6 +134,13 @@ void setup() {
                    {
                       blasters[i].Disable();
                       blocks[j].Disable();
+                      tft.setTextColor(bgColor);  
+                      tft.setCursor(75, 2);
+                      tft.print(score);
+                      score++;
+                      tft.setTextColor(ILI9341_BLUE);  
+                      tft.setCursor(75, 2);
+                      tft.print(score);
                    }
                }
            }
@@ -161,10 +151,17 @@ void setup() {
            {
                if (!blocks[i].getActive())
                {
-                  int16_t randomY = random(230);
-                  blocks[i].Activate(&tft, randomY, 300, 12, 12, COLOR_BLACK, bgColor);
-                  blocks[i].SetVelocity(0.0, 5.0);
+                  int16_t randomY = random(20, 230);
+                  colorIndex++;
+                  if (colorIndex > 5)
+                  {
+                     colorIndex = 0;
+                  }
+                  uint16_t selColor = randomColors[colorIndex];
+                  blocks[i].Activate(&tft, 300, randomY, 12, 12, selColor, bgColor);
+                  blocks[i].SetVelocity(0.0, 10.0);
                   blocks[i].SetBehavior(true, 0);
+                  
                   break;
                }
            }
@@ -211,7 +208,7 @@ void setup() {
                shotVelocity *= -1.0;
                xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(&tft, yFirePos, xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
            blasters[blasterIndex].SetVelocity(0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
@@ -235,7 +232,7 @@ void setup() {
                shotVelocity *= -1.0;
                xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(&tft, yFirePos, xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
            blasters[blasterIndex].SetVelocity(-4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
@@ -243,7 +240,7 @@ void setup() {
            {
               blasterIndex = 0;
            }
-           blasters[blasterIndex].Activate(&tft, yFirePos + player2.getHeight(), xFirePos, 2, 10, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(&tft, xFirePos, yFirePos + player2.getHeight(), 10, 2, COLOR_RED, bgColor);
            blasters[blasterIndex].SetVelocity(4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;

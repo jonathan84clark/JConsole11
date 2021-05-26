@@ -32,10 +32,10 @@ Solid::Solid()
 ******************************************************************/
 Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
 {
-   xPos = inXPos;
    yPos = inYPos;
-   height = inHeight;
-   width = inWidth;
+   xPos = inXPos;
+   width = inHeight;
+   height = inWidth;
    //original = pcolors;
    tft = inTft;
    bg_color = inBgColor;
@@ -45,17 +45,17 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    rotation = UP;
    nextPhysicsTime = 0;
    active = true;
-   tft->fillRect(yPos, xPos, height, width, color);
-   //tft->fillCircle(yPos, xPos, 6, color);
-   //tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
+   tft->fillRect(xPos, yPos, height, width, color);
+   //tft->fillCircle(xPos, yPos, 6, color);
+   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempheight, yPos / 2.0, color);
 }
 
 void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
 {
-   xPos = inXPos;
    yPos = inYPos;
-   height = inHeight;
-   width = inWidth;
+   xPos = inXPos;
+   width = inHeight;
+   height = inWidth;
    //original = pcolors;
    tft = inTft;
    bg_color = inBgColor;
@@ -65,9 +65,9 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    rotation = UP;
    //isSolid = false;
    active = true;
-   tft->fillRect(yPos, xPos, height, width, color);
-   //tft->fillCircle(yPos, xPos, 6, color);
-   //tft->fillTriangle(yPos, xPos, yPos+20, xPos, yPos + height, xPos / 2.0, color);
+   tft->fillRect(xPos, yPos, height, width, color);
+   //tft->fillCircle(xPos, yPos, 6, color);
+   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempheight, yPos / 2.0, color);
 }
 
 void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)
@@ -83,7 +83,7 @@ void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)
 ******************************************************************/
 void Solid::RotateUp()
 {
-    // A left/right rotation to up requires swapping the width and height
+    // A left/right rotation to up requires swapping the height and tempheight
    if (rotation == LEFT || rotation == RIGHT)
    {
        int16_t temp = width;
@@ -91,7 +91,7 @@ void Solid::RotateUp()
        height = temp;
    }
    rotation = UP;
-   tft->fillRect(yPos, xPos, height, width, color);
+   tft->fillRect(xPos, yPos, height, width, color);
 }
 
 /******************************************************************
@@ -100,7 +100,7 @@ void Solid::RotateUp()
 ******************************************************************/
 void Solid::RotateDown()
 {
-    // A left/right rotation to up requires swapping the width and height
+    // A left/right rotation to up requires swapping the height and tempheight
    if (rotation == LEFT || rotation == RIGHT)
    {
        int16_t temp = width;
@@ -108,7 +108,7 @@ void Solid::RotateDown()
        height = temp;
    }
    rotation = DOWN;
-   tft->fillRect(yPos, xPos, height, width, color);
+   tft->fillRect(xPos, yPos, height, width, color);
 }
 
 /******************************************************************
@@ -127,7 +127,7 @@ void Solid::RotateLeft()
        width = height;
        height = temp;
    }
-    tft->fillRect(yPos, xPos, height, width, color);
+    tft->fillRect(xPos, yPos, height, width, color);
 }
 
 /******************************************************************
@@ -144,7 +144,7 @@ void Solid::RotateRight()
        width = height;
        height = temp;
    }
-    tft->fillRect(yPos, xPos, height, width, color);
+    tft->fillRect(xPos, yPos, height, width, color);
 }
 
 /******************************************************************
@@ -163,16 +163,16 @@ uint8_t Solid::CheckCollision(Solid* other)
   uint8_t collision = 0x00;
   uint8_t otherCollision = 0x00;
   // Calculate all the edges
-  int myTopEdge = yPos + height;
-  int otherTopEdge = other->yPos + other->height;
-  int myRightEdge = xPos + width;
-  int otherRightEdge = other->xPos + other->width;
+  int myTopEdge = xPos + height;
+  int otherTopEdge = other->xPos + other->height;
+  int myRightEdge = yPos + width;
+  int otherRightEdge = other->yPos + other->width;
 
    // Handle x direction collisions
-   if (yPos < otherTopEdge && myTopEdge > other->yPos)
+   if (xPos < otherTopEdge && myTopEdge > other->xPos)
    {
        // Object collided with the other on its right edge
-       if (myRightEdge > other->xPos && myRightEdge < otherRightEdge)
+       if (myRightEdge > other->yPos && myRightEdge < otherRightEdge)
        {
           // Newtons 3rd law
           collision |= 0x01;
@@ -180,7 +180,7 @@ uint8_t Solid::CheckCollision(Solid* other)
           collision_cool_down = 10;
        }
        // Object collided with the other on its left edge
-       if (xPos < otherRightEdge && xPos > other->xPos)
+       if (yPos < otherRightEdge && yPos > other->yPos)
        {
           // Newtons 3rd law
           collision |= 0x01;
@@ -190,10 +190,10 @@ uint8_t Solid::CheckCollision(Solid* other)
    }
 
    // Handle y direction collisions
-   if (xPos < otherRightEdge && myRightEdge > other->xPos)
+   if (yPos < otherRightEdge && myRightEdge > other->yPos)
    {
       // Hitting an object on the bottom edge
-      if (yPos < otherTopEdge && yPos > other->yPos)
+      if (xPos < otherTopEdge && xPos > other->xPos)
       {
          // Newtons 3rd law
          collision |= 0x02;
@@ -202,7 +202,7 @@ uint8_t Solid::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
       // Hitting an object on the top edge
-      if (myTopEdge > other->yPos && myTopEdge < otherTopEdge)
+      if (myTopEdge > other->xPos && myTopEdge < otherTopEdge)
       {
          // Newtons 3rd law
          collision |= 0x02;
@@ -239,8 +239,8 @@ void Solid::PhysicsMove(unsigned long milliseconds)
     }
     int16_t nextPosX = 0;
     int16_t nextPosY = 0;
-    physics.Compute(xPos, yPos, &nextPosX, &nextPosY);
-    uint8_t collisions = Move(xPos - nextPosX, yPos - nextPosY);
+    physics.Compute(yPos, xPos, &nextPosX, &nextPosY);
+    uint8_t collisions = Move(yPos - nextPosX, xPos - nextPosY);
     if (disableOnHit && collisions) // Object hit a wall
     {
         Disable();
@@ -262,7 +262,7 @@ void Solid::SetPhysics(float inMass, float inFriction, float inGravity, float in
 void Solid::Disable()
 {
    active = false;
-    tft->fillRect(yPos, xPos, height, width, bg_color);
+    tft->fillRect(xPos, yPos, height, width, bg_color);
 }
 
 /*********************************************************************
@@ -271,26 +271,26 @@ void Solid::Disable()
 *********************************************************************/
 uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
 {
-   int16_t prevX = xPos;
-   int16_t prevY = yPos;
+   int16_t prevX = yPos;
+   int16_t prevY = xPos;
    uint8_t prevDeleted = 0;
    uint8_t yMoveStopped = 0;
    uint8_t xMoveStopped = 0;
    uint8_t walls = 0x00;
 
-   xPos += deltaX;
-   yPos += deltaY;
+   yPos += deltaX;
+   xPos += deltaY;
    // Pre-calculate boundaries to ensure we don't leave the screen
-   if (yPos < 0)
+   if (xPos < 0)
    {
        yMoveStopped = 1;
-       yPos = 0;
+       xPos = 0;
        walls |= 0x02;
    }
-   else if ((yPos + height) > 320)
+   else if ((xPos + height) > 320)
    {
        yMoveStopped = 2;
-       yPos = 320 - height;
+       xPos = 320 - height;
        walls |= 0x02;
    }
    else
@@ -298,16 +298,16 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       prevYStopped = false;
    }
 
-   if (xPos < 0)
+   if (yPos < 0)
    {
       xMoveStopped = 1;
-      xPos = 0;
+      yPos = 0;
       walls |= 0x01;
    }
-   else if ((xPos + width) > 240)
+   else if ((yPos + width) > 240)
    {
       xMoveStopped = 2;
-      xPos = 240 - width;
+      yPos = 240 - width;
       walls |= 0x01;
    }
    else
@@ -338,7 +338,7 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
    else
    {
        
-       tft->fillRect(prevY, (xPos + width), height, abs(deltaX), bg_color);
+       tft->fillRect(prevY, (yPos + width), height, abs(deltaX), bg_color);
    }
 
    if (yMoveStopped)
@@ -362,7 +362,7 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
    {
       tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, bg_color);
    }
-    tft->fillRect(yPos, xPos, height, width, color);
+    tft->fillRect(xPos, yPos, height, width, color);
 
    return walls;
 }

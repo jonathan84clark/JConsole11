@@ -245,15 +245,15 @@ uint8_t GameObject::CheckCollision(Solid* other)
   uint8_t otherCollision = 0x00;
   // Calculate all the edges
   int myTopEdge = yPos + height;
-  int otherTopEdge = other->getYPos() + other->getHeight();
+  int otherTopEdge = other->getXPos() + other->getHeight();
   int myRightEdge = xPos + width;
-  int otherRightEdge = other->getXPos() + other->getWidth();
+  int otherRightEdge = other->getYPos() + other->getWidth();
   
    // Handle x direction collisions
-   if (yPos < otherTopEdge && myTopEdge > other->getYPos())
+   if (yPos < otherTopEdge && myTopEdge > other->getXPos())
    {
        // Object collided with the other on its right edge
-       if (myRightEdge > other->getXPos() && myRightEdge < otherRightEdge)
+       if (myRightEdge > other->getYPos() && myRightEdge < otherRightEdge)
        {
           // Newtons 3rd law
           collision |= 0x01;
@@ -261,7 +261,7 @@ uint8_t GameObject::CheckCollision(Solid* other)
           collision_cool_down = 10;
        }
        // Object collided with the other on its left edge
-       if (xPos < otherRightEdge && xPos > other->getXPos())
+       if (xPos < otherRightEdge && xPos > other->getYPos())
        {
           // Newtons 3rd law
           collision |= 0x01;
@@ -271,10 +271,10 @@ uint8_t GameObject::CheckCollision(Solid* other)
    }
 
    // Handle y direction collisions
-   if (xPos < otherRightEdge && myRightEdge > other->getXPos())
+   if (xPos < otherRightEdge && myRightEdge > other->getYPos())
    {
       // Hitting an object on the bottom edge
-      if (yPos < otherTopEdge && yPos > other->getYPos())
+      if (yPos < otherTopEdge && yPos > other->getXPos())
       {
          // Newtons 3rd law
          collision |= 0x02;
@@ -283,7 +283,7 @@ uint8_t GameObject::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
       // Hitting an object on the top edge
-      if (myTopEdge > other->getYPos() && myTopEdge < otherTopEdge)
+      if (myTopEdge > other->getXPos() && myTopEdge < otherTopEdge)
       {
          // Newtons 3rd law
          collision |= 0x02;
