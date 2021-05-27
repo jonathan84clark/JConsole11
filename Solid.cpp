@@ -22,7 +22,6 @@ Solid::Solid()
    prevYStopped = false;
    active = false;
    nextPhysicsTime = 0;
-   //imageSize = 0;
    rotation = UP;
    collision_cool_down = 0;
 }
@@ -34,9 +33,8 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
 {
    yPos = inYPos;
    xPos = inXPos;
-   width = inHeight;
-   height = inWidth;
-   //original = pcolors;
+   height = inHeight;
+   width = inWidth;
    tft = inTft;
    bg_color = inBgColor;
    color = inColor;
@@ -45,18 +43,17 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    rotation = UP;
    nextPhysicsTime = 0;
    active = true;
-   tft->fillRect(xPos, yPos, height, width, color);
+   tft->fillRect(xPos, yPos, width, height, color);
    //tft->fillCircle(xPos, yPos, 6, color);
-   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempheight, yPos / 2.0, color);
+   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempwidth, yPos / 2.0, color);
 }
 
 void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
 {
    yPos = inYPos;
    xPos = inXPos;
-   width = inHeight;
-   height = inWidth;
-   //original = pcolors;
+   height = inHeight;
+   width = inWidth;
    tft = inTft;
    bg_color = inBgColor;
    color = inColor;
@@ -65,9 +62,9 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    rotation = UP;
    //isSolid = false;
    active = true;
-   tft->fillRect(xPos, yPos, height, width, color);
+   tft->fillRect(xPos, yPos, width, height, color);
    //tft->fillCircle(xPos, yPos, 6, color);
-   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempheight, yPos / 2.0, color);
+   //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempwidth, yPos / 2.0, color);
 }
 
 void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)
@@ -83,15 +80,15 @@ void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)
 ******************************************************************/
 void Solid::RotateUp()
 {
-    // A left/right rotation to up requires swapping the height and tempheight
+    // A left/right rotation to up requires swapping the width and tempwidth
    if (rotation == LEFT || rotation == RIGHT)
    {
-       int16_t temp = width;
-       width = height;
-       height = temp;
+       int16_t temp = height;
+       height = width;
+       width = temp;
    }
    rotation = UP;
-   tft->fillRect(xPos, yPos, height, width, color);
+   tft->fillRect(xPos, yPos, width, height, color);
 }
 
 /******************************************************************
@@ -100,15 +97,15 @@ void Solid::RotateUp()
 ******************************************************************/
 void Solid::RotateDown()
 {
-    // A left/right rotation to up requires swapping the height and tempheight
+    // A left/right rotation to up requires swapping the width and tempwidth
    if (rotation == LEFT || rotation == RIGHT)
    {
-       int16_t temp = width;
-       width = height;
-       height = temp;
+       int16_t temp = height;
+       height = width;
+       width = temp;
    }
    rotation = DOWN;
-   tft->fillRect(xPos, yPos, height, width, color);
+   tft->fillRect(xPos, yPos, width, height, color);
 }
 
 /******************************************************************
@@ -120,14 +117,14 @@ void Solid::RotateLeft()
    int16_t imageIndex = 0;
    int16_t readStart = 0;
    //imageIndex = imageSize - 1;
-   // A left/right rotation to up requires swapping the width and height
+   // A left/right rotation to up requires swapping the height and width
    if (rotation == UP || rotation == DOWN)
    {
-       int16_t temp = width;
-       width = height;
-       height = temp;
+       int16_t temp = height;
+       height = width;
+       width = temp;
    }
-    tft->fillRect(xPos, yPos, height, width, color);
+    tft->fillRect(xPos, yPos, width, height, color);
 }
 
 /******************************************************************
@@ -140,11 +137,11 @@ void Solid::RotateRight()
    int16_t readStart = 0;
    if (rotation == UP || rotation == DOWN)
    {
-       int16_t temp = width;
-       width = height;
-       height = temp;
+       int16_t temp = height;
+       height = width;
+       width = temp;
    }
-    tft->fillRect(xPos, yPos, height, width, color);
+    tft->fillRect(xPos, yPos, width, height, color);
 }
 
 /******************************************************************
@@ -163,10 +160,10 @@ uint8_t Solid::CheckCollision(Solid* other)
   uint8_t collision = 0x00;
   uint8_t otherCollision = 0x00;
   // Calculate all the edges
-  int myTopEdge = xPos + height;
-  int otherTopEdge = other->xPos + other->height;
-  int myRightEdge = yPos + width;
-  int otherRightEdge = other->yPos + other->width;
+  int myTopEdge = xPos + width;
+  int otherTopEdge = other->xPos + other->width;
+  int myRightEdge = yPos + height;
+  int otherRightEdge = other->yPos + other->height;
 
    // Handle x direction collisions
    if (xPos < otherTopEdge && myTopEdge > other->xPos)
@@ -215,7 +212,6 @@ uint8_t Solid::CheckCollision(Solid* other)
    //other->physics.HandleCollision(collision);
    
    return collision;
-   //return 0x00;
 }
 
 /******************************************************************
@@ -262,7 +258,7 @@ void Solid::SetPhysics(float inMass, float inFriction, float inGravity, float in
 void Solid::Disable()
 {
    active = false;
-    tft->fillRect(xPos, yPos, height, width, bg_color);
+    tft->fillRect(xPos, yPos, width, height, bg_color);
 }
 
 /*********************************************************************
@@ -287,10 +283,10 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
        xPos = 0;
        walls |= 0x02;
    }
-   else if ((xPos + height) > 320)
+   else if ((xPos + width) > 320)
    {
        yMoveStopped = 2;
-       xPos = 320 - height;
+       xPos = 320 - width;
        walls |= 0x02;
    }
    else
@@ -304,10 +300,10 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       yPos = 0;
       walls |= 0x01;
    }
-   else if ((yPos + width) > 240)
+   else if ((yPos + height) > 240)
    {
       xMoveStopped = 2;
-      yPos = 240 - width;
+      yPos = 240 - height;
       walls |= 0x01;
    }
    else
@@ -319,50 +315,49 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
    {
       if (!prevXStopped)
       {
-         tft->fillRect(prevY, prevX, height, width, bg_color);
+         tft->fillRect(prevY, prevX, width, height, bg_color);
          prevXStopped = true;
       }
    }
-   // If the object we are moving is greater in width than the amount we are moving we just delete the object
-   else if (abs(deltaX) >= width)
+   // If the object we are moving is greater in height than the amount we are moving we just delete the object
+   else if (abs(deltaX) >= height)
    {
-       tft->fillRect(prevY, prevX, height, width, bg_color);
-       //prevDeleted = 1;
+       tft->fillRect(prevY, prevX, width, height, bg_color);
    }
    // Moving right, only delete what we absolutley need to
    else if (deltaX > 0)
    {
-       tft->fillRect(prevY, prevX, height, abs(deltaX), bg_color);
+       tft->fillRect(prevY, prevX, width, abs(deltaX), bg_color);
    }
    // Moving left, only delete what we absolutley need to
    else
    {
        
-       tft->fillRect(prevY, (yPos + width), height, abs(deltaX), bg_color);
+       tft->fillRect(prevY, (yPos + height), width, abs(deltaX), bg_color);
    }
 
    if (yMoveStopped)
    {
       if (!prevYStopped)
       {
-         tft->fillRect(prevY, prevX, height, width, bg_color);
+         tft->fillRect(prevY, prevX, width, height, bg_color);
          prevYStopped = true;
       }
    }
-   // If the object we are moving is greater in height then the amount we are moving we just delete the object
-   else if (abs(deltaY) >= height)
+   // If the object we are moving is greater in width then the amount we are moving we just delete the object
+   else if (abs(deltaY) >= width)
    {
-      tft->fillRect(prevY, prevX, height, width, bg_color);
+      tft->fillRect(prevY, prevX, width, height, bg_color);
    }
    else if (deltaY > 0)
    {
-      tft->fillRect(prevY, prevX, abs(deltaY), width, bg_color);
+      tft->fillRect(prevY, prevX, abs(deltaY), height, bg_color);
    }
    else
    {
-      tft->fillRect((prevY+height+deltaY), prevX, abs(deltaY), width, bg_color);
+      tft->fillRect((prevY+width+deltaY), prevX, abs(deltaY), height, bg_color);
    }
-    tft->fillRect(xPos, yPos, height, width, color);
+    tft->fillRect(xPos, yPos, width, height, color);
 
    return walls;
 }

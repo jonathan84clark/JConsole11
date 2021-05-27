@@ -12,6 +12,7 @@
 #include "Solid.h"
 #include "GameObject.h"
 #include "Models.h"
+#include "Bar.h"
 
 // For the Adafruit shield, these are the default.
 #define TFT_DC 4
@@ -65,6 +66,7 @@ void setup() {
 
   uint16_t bgColor = COLOR_SKYBLUE;
   tft.fillScreen(bgColor);
+  tft.setRotation(1);
 
    // Clear all debounce times
    for (int i = 0; i < NUM_BTNS; i++)
@@ -75,7 +77,8 @@ void setup() {
    int numBlasters = 20;
    int blasterIndex = 0;
 
-   GameObject player2(&tft, 10, 100, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   GameObject player2(&tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   Bar healthBar(&tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
 
    Solid blasters[numBlasters];
    Solid blocks[numBlocks];
@@ -89,7 +92,7 @@ void setup() {
    int colorIndex = 0;
    int16_t startYPos = 10;
    unsigned int score = 0;
-   tft.setRotation(1);
+
    tft.setCursor(2, 2);
    tft.setTextColor(ILI9341_BLUE);  
    tft.setTextSize(2);

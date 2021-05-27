@@ -245,9 +245,9 @@ uint8_t GameObject::CheckCollision(Solid* other)
   uint8_t otherCollision = 0x00;
   // Calculate all the edges
   int myTopEdge = yPos + height;
-  int otherTopEdge = other->getXPos() + other->getHeight();
+  int otherTopEdge = other->getXPos() + other->getWidth();
   int myRightEdge = xPos + width;
-  int otherRightEdge = other->getYPos() + other->getWidth();
+  int otherRightEdge = other->getYPos() + other->getHeight();
   
    // Handle x direction collisions
    if (yPos < otherTopEdge && myTopEdge > other->getXPos())
@@ -442,10 +442,10 @@ uint8_t GameObject::Move(int16_t deltaX, int16_t deltaY)
       prevYStopped = false;
    }
 
-   if (xPos < 0)
+   if (xPos < 20)
    {
       xMoveStopped = 1;
-      xPos = 0;
+      xPos = 20;
       walls |= 0x01;
    }
    else if ((xPos + width) > 240)
