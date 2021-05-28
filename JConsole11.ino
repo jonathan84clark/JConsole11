@@ -13,6 +13,8 @@
 #include "GameObject.h"
 #include "Models.h"
 #include "Bar.h"
+#include "Menu.h"
+#include "Config.h"
 
 // For the Adafruit shield, these are the default.
 #define TFT_DC 4
@@ -21,20 +23,6 @@
 #define TFT_CLK 2
 #define TFT_RST 5
 #define TFT_MISO 0
-
-#define NUM_BTNS 7
-#define JOYSTICK_X A2
-#define JOYSTICK_Y A1
-#define JOYSTICK_BTN 22
-#define SELECT_BTN 15
-#define START_BTN 14
-#define TOP_RIGHT 11
-#define TOP_LEFT 8
-#define BOTTOM_RIGHT 10
-#define BOTTOM_LEFT 9
-#define LEDS 21
-
-#define ADC_MAX 4095
 
 static uint16_t randomColors[] = {COLOR_BLUE, COLOR_RED, COLOR_MAGENTA, COLOR_ORANGE, COLOR_FORESTGREEN, COLOR_DRKGREY};
 
@@ -79,9 +67,12 @@ void setup() {
 
    GameObject player2(&tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(&tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
-
+   Menu menuSystem(&tft);
+   
    Solid blasters[numBlasters];
    Solid blocks[numBlocks];
+   float originalHealth = 100;
+   float currentHealth = originalHealth;
 
    unsigned long msTicks = 0;
    unsigned long nextTime = 0;
@@ -111,6 +102,12 @@ void setup() {
                uint8_t collision = player2.CheckCollision(&blocks[k]);
                if (collision)
                {
+                  currentHealth -= 3;
+                  if (currentHealth < 0.0)
+                  {
+                     currentHealth = 0.0;
+                  }
+                  healthBar.Update(currentHealth / originalHealth);
                   blocks[k].Disable();
                }
            }
@@ -138,6 +135,7 @@ void setup() {
                       blasters[i].Disable();
                       blocks[j].Disable();
                       tft.setTextColor(bgColor);  
+                      tft.setTextSize(2);
                       tft.setCursor(75, 2);
                       tft.print(score);
                       score++;
@@ -174,16 +172,17 @@ void setup() {
        if (debounceTimes[0] < msTicks && digitalRead(JOYSTICK_BTN))
        {
            // Handle joystick btn pressed
+           menuSystem.Pause();
            debounceTimes[0] = msTicks + 200; // Right now 200ms debounce time
        }
        // Start button handler
-       if (debounceTimes[1] < msTicks && digitalRead(START_BTN))
+       if (debounceTimes[1] < msTicks && digitalRead(START_BTN) == 0)
        {
            // Handle joystick btn pressed
            debounceTimes[1] = msTicks + 200; // Right now 200ms debounce time
        }
        // Select button handler
-       if (debounceTimes[2] < msTicks && digitalRead(SELECT_BTN))
+       if (debounceTimes[2] < msTicks && digitalRead(SELECT_BTN) == 0)
        {
            // Handle joystick btn pressed
            debounceTimes[2] = msTicks + 200; // Right now 200ms debounce time
@@ -219,8 +218,7 @@ void setup() {
            {
               blasterIndex = 0;
            }
-           //blasters[blasterIndex](&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-           fireDebounce = msTicks + 200; // Right now 200ms debounce time
+           fireDebounce = msTicks + 100; // Right now 200ms debounce time
        }
        // Top right button handler
        if (fireDebounce < msTicks && digitalRead(TOP_RIGHT) == 0)
@@ -252,16 +250,16 @@ void setup() {
               blasterIndex = 0;
            }
            //blasters[blasterIndex](&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
-           fireDebounce = msTicks + 200; // Right now 200ms debounce time
+           fireDebounce = msTicks + 300; // Right now 200ms debounce time
            //debounceTimes[4] = msTicks + 200; // Right now 200ms debounce time
        }
        // Bottom left button handler
-       if (debounceTimes[5] < msTicks && digitalRead(BOTTOM_LEFT))
+       if (debounceTimes[5] < msTicks && digitalRead(BOTTOM_LEFT) == 0)
        {
            debounceTimes[5] = msTicks + 200; // Right now 200ms debounce time
        }
        // Bottom right button handler
-       if (debounceTimes[6] < msTicks && digitalRead(BOTTOM_RIGHT))
+       if (debounceTimes[6] < msTicks && digitalRead(BOTTOM_RIGHT) == 0)
        {
            debounceTimes[6] = msTicks + 200; // Right now 200ms debounce time
        }
@@ -271,18 +269,15 @@ void setup() {
            xScaler = xScaler / (float)(ADC_MAX / 2);
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
-           //Serial.println(analogRead(JOYSTICK_Y));
            if (xScaler > 0.2)
            {
-              //Serial.println("right");
               player2.RotateLeft();
            }
            else if (xScaler < -0.2)
            {
-              //Serial.println("Left");
               player2.RotateRight();
            }
-           player2.SetVelocity(xScaler * 20.0, yScaler * -20.0);
+           player2.SetVelocity(xScaler * 30.0, yScaler * -30.0);
            nextControlTime = msTicks + 50;
        }
    }

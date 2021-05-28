@@ -241,6 +241,10 @@ uint8_t GameObject::CheckCollision(Solid* other)
      collision_cool_down--;
      return 0x00;
   }
+  if (!other->getActive() || !active)
+  {
+    return 0x00;
+  }
   uint8_t collision = 0x00;
   uint8_t otherCollision = 0x00;
   // Calculate all the edges

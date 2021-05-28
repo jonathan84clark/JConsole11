@@ -17,6 +17,7 @@ class Bar
       // Public Functions
       Bar();
       Bar(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inContrast, uint16_t inBgColor);
+      void Update(float newHealth);
       int16_t getHeight() { return height; }
       int16_t getWidth() { return width; }
       int16_t getXPos() { return xPos; }

@@ -33,3 +33,15 @@ Bar::Bar(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidt
    contrast = inContrast;
    tft->fillRect(xPos, yPos, width, height, color);
 }
+
+/******************************************************************
+* UPDATE
+* DESC: Updates the health bar with a new health value
+******************************************************************/
+void Bar::Update(float newHealth)
+{
+   int16_t colorWidth = (int16_t)((float)width * newHealth);
+   int16_t contrastWidth = width - colorWidth;
+   int16_t contrastXStart = xPos + colorWidth;
+   tft->fillRect(contrastXStart, yPos, contrastWidth, height, contrast);
+}
