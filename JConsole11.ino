@@ -67,7 +67,7 @@ void setup() {
 
    GameObject player2(&tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(&tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
-   Menu menuSystem(&tft);
+   Menu menuSystem(&tft, bgColor);
    
    Solid blasters[numBlasters];
    Solid blocks[numBlocks];

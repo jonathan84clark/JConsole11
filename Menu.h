@@ -14,11 +14,12 @@
 class Menu
 {
    public:
-      Menu(Adafruit_ILI9341 *inTft);
-      uint8_t Pause();
+      Menu(Adafruit_ILI9341 *inTft, uint16_t inBg_color);
+      int Pause();
    
    private:
       Adafruit_ILI9341 *tft;
+      uint16_t bg_color;
       
 };
 

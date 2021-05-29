@@ -14,21 +14,22 @@
 /******************************************************************
 * SOLID DEFAULT CONSTRUCTOR
 ******************************************************************/
-Menu::Menu(Adafruit_ILI9341 *inTft)
+Menu::Menu(Adafruit_ILI9341 *inTft, uint16_t inBg_color)
 {
    tft = inTft;
+   bg_color = inBg_color;
 }
 
 /******************************************************************
 * MENU PAUSE
 * DESC: Handles pausing the game.
 ******************************************************************/
-uint8_t Menu::Pause()
+int Menu::Pause()
 {
    unsigned long msTicks = 0;
    unsigned long selectDebounce = 0;
    unsigned long nextJoystickTime = 0;
-   int16_t yPosition = 100;
+   int16_t yPosition = 102;
    int selectedOption = 0;
    tft->setTextColor(ILI9341_BLUE);
    tft->setTextSize(3);  
@@ -54,30 +55,50 @@ uint8_t Menu::Pause()
           paused = false;
           selectDebounce = msTicks + 200;
        }
-       // Joystick/ Menu button handler
-       if (digitalRead(JOYSTICK_BTN))
-       {
-           //paused = false;
-           //debounceTimes[0] = msTicks + 200; // Right now 200ms debounce time
-       }
        if (nextJoystickTime < msTicks)
        {
-          float xScaler = (float)analogRead(JOYSTICK_X) - (float)(ADC_MAX / 2);
-          xScaler = xScaler / (float)(ADC_MAX / 2);
           float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
           yScaler = yScaler / (float)(ADC_MAX / 2);
+          if (yScaler > 0.2)
+          {
+              tft->fillRect(80, yPosition, 10, 10, bg_color);
+              selectedOption++;
+              if (selectedOption == 3)
+              {
+                  selectedOption = 0;
+                  yPosition = 102;
+              }
+              else
+              {
+                 yPosition += 30;
+              }
+              tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
+              nextJoystickTime = msTicks + 200;
+          }
           if (yScaler < -0.2)
           {
+              tft->fillRect(80, yPosition, 10, 10, bg_color);
               selectedOption--;
+              if (selectedOption < 0)
+              {
+                  selectedOption = 2;
+                  yPosition = 162;
+              }
+              else
+              {
+                 yPosition -= 30;
+              }
+              tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
+              nextJoystickTime = msTicks + 200;
           }
-          nextJoystickTime = msTicks + 200;
+          
        }
 
     
    }
+   tft->fillRect(80, 10, 150, 200, bg_color);
 
-
-   return 0;
+   return selectedOption;
 
   
 }
