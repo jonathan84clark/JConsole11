@@ -16,6 +16,7 @@ class Menu
    public:
       Menu(Adafruit_ILI9341 *inTft, uint16_t inBg_color);
       int Pause();
+      int MultiOption(char* title, char options[][15], int numOptions);
    
    private:
       Adafruit_ILI9341 *tft;

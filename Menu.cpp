@@ -10,6 +10,10 @@
 #include "Adafruit_ILI9341.h"
 #include "Config.h"
 #include "Models.h"
+#include "Bar.h"
+#include "Menu.h"
+#include "Config.h"
+#include "BrickBreaker.h"
 
 /******************************************************************
 * SOLID DEFAULT CONSTRUCTOR
@@ -20,24 +24,27 @@ Menu::Menu(Adafruit_ILI9341 *inTft, uint16_t inBg_color)
    bg_color = inBg_color;
 }
 
-int Menu::MultiOption()
+int Menu::MultiOption(char* title, char options[][15], int numOptions)
 {
    unsigned long msTicks = 0;
    unsigned long selectDebounce = 0;
    unsigned long nextJoystickTime = 0;
-   int16_t yPosition = 102;
+   int16_t yPosition = 82;
    int selectedOption = 0;
    tft->setTextColor(ILI9341_BLUE);
    tft->setTextSize(3);  
-   tft->setCursor(100, 50);
-   tft->print("Paused");
-   tft->setCursor(100, 100);
+   tft->setCursor(80, 20);
+   tft->print(title);
    tft->setTextSize(2);
-   tft->print("Resume");
-   tft->setCursor(100, 130);
-   tft->print("High Scores");
-   tft->setCursor(100, 160);
-   tft->print("Exit");
+   int yPos = 80;
+
+   for (int i = 0; i < numOptions; i++)
+   {
+      tft->setCursor(100, yPos);
+      //tft->setTextSize(2);
+      tft->print(options[i]);
+      yPos += 30;
+   }
    tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
    bool paused = true;
    
@@ -48,7 +55,28 @@ int Menu::MultiOption()
        // Fire button
        if (selectDebounce < msTicks && digitalRead(TOP_LEFT) == 0)
        {
-          paused = false;
+          // Brick Breaker selected
+          if (selectedOption == 0)
+          {
+              BrickBreaker(tft);
+              yPosition = 82;
+               //selectedOption = 0;
+              tft->setTextColor(ILI9341_BLUE);
+              tft->setTextSize(3);  
+              tft->setCursor(80, 20);
+              tft->print(title);
+              tft->setTextSize(2);
+              yPos = 80;
+
+              for (int i = 0; i < numOptions; i++)
+              {
+                 tft->setCursor(100, yPos);
+                  //tft->setTextSize(2);
+                 tft->print(options[i]);
+                 yPos += 30;
+              }
+              tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
+          }
           selectDebounce = msTicks + 200;
        }
        if (nextJoystickTime < msTicks)
@@ -59,7 +87,7 @@ int Menu::MultiOption()
           {
               tft->fillRect(80, yPosition, 10, 10, bg_color);
               selectedOption++;
-              if (selectedOption == 3)
+              if (selectedOption == numOptions)
               {
                   selectedOption = 0;
                   yPosition = 102;

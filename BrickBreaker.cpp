@@ -142,7 +142,11 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        if (debounceTimes[0] < msTicks && digitalRead(JOYSTICK_BTN))
        {
            // Handle joystick btn pressed
-           menuSystem.Pause();
+           int output = menuSystem.Pause();
+           if (output == 2)
+           {
+               break;
+           }
            debounceTimes[0] = msTicks + 200; // Right now 200ms debounce time
        }
        // Start button handler

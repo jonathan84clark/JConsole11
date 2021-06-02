@@ -29,6 +29,7 @@
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 // If using the breakout, change pins as desired
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
+char mainMenuOptions[][15] = {"Debris", "Breaker", "Tanks", "Options"};
 
 void setup() 
 {
@@ -50,8 +51,16 @@ void setup()
   
   tft.begin(20000000);
   tft.setRotation(1);
+  Menu menu(&tft, COLOR_DARKGREEN);
 
-  BrickBreaker(&tft);
+  //for (int i =0 ; i < 4; i++)
+  //{
+  //   Serial.println(mainMenuOptions[i]);
+  //}
+
+  menu.MultiOption("JConsole 11", mainMenuOptions, 4);
+
+  //BrickBreaker(&tft);
 
 }
 
