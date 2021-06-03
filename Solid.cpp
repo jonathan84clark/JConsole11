@@ -41,6 +41,7 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    color = inColor;
    prevXStopped = false;
    prevYStopped = false;
+   disableOnHit = false;
    rotation = UP;
    nextPhysicsTime = 0;
    active = true;
@@ -60,6 +61,7 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    color = inColor;
    prevXStopped = false;
    prevYStopped = false;
+   disableOnHit = false;
    rotation = UP;
    //isSolid = false;
    active = true;

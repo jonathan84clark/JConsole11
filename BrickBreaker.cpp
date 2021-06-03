@@ -33,8 +33,8 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int blasterIndex = 0;
    int maxBalls = 6;
 
-   //Solid playerPaddle(tft, 100, 220, 40, 5, COLOR_BLACK, bgColor);
-   Solid playerPaddle(tft, 100, 220, 10, 10, COLOR_BLACK, bgColor);
+   Solid playerPaddle(tft, 100, 220, 40, 5, COLOR_BLACK, bgColor);
+   //Solid playerPaddle(tft, 100, 220, 10, 10, COLOR_BLACK, bgColor);
    //Solid player2(tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
    Menu menuSystem(tft, bgColor);
@@ -72,6 +72,10 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        if (nextTime < msTicks)
        {
            playerPaddle.PhysicsMove(msTicks);
+           uint8_t collision = balls[i].CheckCollision(playerPaddle))
+           {
+               //balls[i].
+           }
            /*
            for (int k = 0; k < numBlocks; k++)
            {
