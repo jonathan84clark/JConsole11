@@ -388,7 +388,7 @@ void GameObject::PhysicsMove()
 {
     if (!active)
     {
-        Serial.println("No physics move");
+       //Serial.println("No physics move");
        return; // Inactive objects don't do anything
     }
     int16_t nextPosX = 0;

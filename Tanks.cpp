@@ -1,7 +1,6 @@
 /*******************************************************
-* DEBRIS
-* DESC: Debris is a simple game where you destroy blocks heading toward
-* your aircraft
+* BRICK BREAKER
+* DESC: Brick breaker is a fun game used on JConsole11
 * Author: Jonathan L Clark
 * Date: 5/31/2021
 *******************************************************/
@@ -19,7 +18,7 @@ static uint16_t randomColors[] = {COLOR_BLUE, COLOR_RED, COLOR_MAGENTA, COLOR_OR
 
 //Solid blasters[20];
 
-void Debris(Adafruit_ILI9341* tft)
+void Tanks(Adafruit_ILI9341* tft)
 {
    unsigned int debounceTimes[NUM_BTNS];
    uint16_t bgColor = COLOR_SKYBLUE;

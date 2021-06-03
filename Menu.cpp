@@ -14,6 +14,8 @@
 #include "Menu.h"
 #include "Config.h"
 #include "BrickBreaker.h"
+#include "Debris.h"
+#include "Tanks.h"
 
 /******************************************************************
 * SOLID DEFAULT CONSTRUCTOR
@@ -24,19 +26,16 @@ Menu::Menu(Adafruit_ILI9341 *inTft, uint16_t inBg_color)
    bg_color = inBg_color;
 }
 
-int Menu::MultiOption(char* title, char options[][15], int numOptions)
+void Menu::DrawMenu(char* title,char options[][15], int numOptions, int selectedOption)
 {
-   unsigned long msTicks = 0;
-   unsigned long selectDebounce = 0;
-   unsigned long nextJoystickTime = 0;
-   int16_t yPosition = 82;
-   int selectedOption = 0;
+   int yPos = 80;
+   int16_t yPosition = 82 + selectedOption * 30;
+   tft->fillScreen(bg_color);
    tft->setTextColor(ILI9341_BLUE);
    tft->setTextSize(3);  
    tft->setCursor(80, 20);
    tft->print(title);
    tft->setTextSize(2);
-   int yPos = 80;
 
    for (int i = 0; i < numOptions; i++)
    {
@@ -46,6 +45,15 @@ int Menu::MultiOption(char* title, char options[][15], int numOptions)
       yPos += 30;
    }
    tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
+}
+
+int Menu::MultiOption(char* title, char options[][15], int numOptions)
+{
+   unsigned long msTicks = 0;
+   unsigned long selectDebounce = 0;
+   unsigned long nextJoystickTime = 0;
+   int selectedOption = 0;
+   DrawMenu(title, options, numOptions, selectedOption);
    bool paused = true;
    
 
@@ -58,24 +66,20 @@ int Menu::MultiOption(char* title, char options[][15], int numOptions)
           // Brick Breaker selected
           if (selectedOption == 0)
           {
+              Debris(tft);
+              DrawMenu(title, options, numOptions, selectedOption);
+          }
+          // Brick Breaker selected
+          else if (selectedOption == 1)
+          {
               BrickBreaker(tft);
-              yPosition = 82;
-               //selectedOption = 0;
-              tft->setTextColor(ILI9341_BLUE);
-              tft->setTextSize(3);  
-              tft->setCursor(80, 20);
-              tft->print(title);
-              tft->setTextSize(2);
-              yPos = 80;
-
-              for (int i = 0; i < numOptions; i++)
-              {
-                 tft->setCursor(100, yPos);
-                  //tft->setTextSize(2);
-                 tft->print(options[i]);
-                 yPos += 30;
-              }
-              tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
+              DrawMenu(title, options, numOptions, selectedOption);
+          }
+          // Tanks option selected
+          else if (selectedOption == 2)
+          {
+              Tanks(tft);
+              DrawMenu(title, options, numOptions, selectedOption);
           }
           selectDebounce = msTicks + 200;
        }
@@ -85,40 +89,32 @@ int Menu::MultiOption(char* title, char options[][15], int numOptions)
           yScaler = yScaler / (float)(ADC_MAX / 2);
           if (yScaler > 0.2)
           {
+              int16_t yPosition = 82 + selectedOption * 30;
               tft->fillRect(80, yPosition, 10, 10, bg_color);
               selectedOption++;
               if (selectedOption == numOptions)
               {
                   selectedOption = 0;
-                  yPosition = 102;
               }
-              else
-              {
-                 yPosition += 30;
-              }
+              yPosition = 82 + selectedOption * 30;
               tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
               nextJoystickTime = msTicks + 200;
           }
           if (yScaler < -0.2)
           {
+              int16_t yPosition = 82 + selectedOption * 30;
               tft->fillRect(80, yPosition, 10, 10, bg_color);
               selectedOption--;
               if (selectedOption < 0)
               {
                   selectedOption = 2;
-                  yPosition = 162;
               }
-              else
-              {
-                 yPosition -= 30;
-              }
+              yPosition = 82 + selectedOption * 30;
               tft->fillRect(80, yPosition, 10, 10, COLOR_RED);
               nextJoystickTime = msTicks + 200;
           }
           
        }
-
-    
    }
    tft->fillRect(80, 10, 150, 200, bg_color);
 

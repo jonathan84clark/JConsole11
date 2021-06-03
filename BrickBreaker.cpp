@@ -16,8 +16,6 @@
 
 static uint16_t randomColors[] = {COLOR_BLUE, COLOR_RED, COLOR_MAGENTA, COLOR_ORANGE, COLOR_FORESTGREEN, COLOR_DRKGREY};
 
-//Solid blasters[20];
-
 void BrickBreaker(Adafruit_ILI9341* tft)
 {
    unsigned int debounceTimes[NUM_BTNS];
@@ -33,13 +31,17 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int numBlocks = 10;
    int numBlasters = 20;
    int blasterIndex = 0;
+   int maxBalls = 6;
 
-   GameObject player2(tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
+   //Solid playerPaddle(tft, 100, 220, 40, 5, COLOR_BLACK, bgColor);
+   Solid playerPaddle(tft, 100, 220, 10, 10, COLOR_BLACK, bgColor);
+   //Solid player2(tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
    Menu menuSystem(tft, bgColor);
    
-   Solid blasters[numBlasters];
-   Solid blocks[numBlocks];
+   //Solid blasters[numBlasters];
+   Solid bricks[numBlocks];
+   Solid balls[6]; //(tft, 10, 10, 20, 20, COLOR_BLUE, COLOR_RED, bgColor);
    float originalHealth = 100;
    float currentHealth = originalHealth;
 
@@ -52,6 +54,9 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int colorIndex = 0;
    int16_t startYPos = 10;
    unsigned int score = 0;
+   balls[0].Activate(tft, 50, 50, 10, 10, COLOR_RED, bgColor);
+   balls[0].SetPhysics(200, 0.0, 0.0, 1.0, 0.0);
+   balls[0].SetVelocity(10.0, 10.0);
 
 
    tft->setCursor(2, 2);
@@ -66,7 +71,8 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        msTicks = millis();
        if (nextTime < msTicks)
        {
-           player2.PhysicsMove();
+           playerPaddle.PhysicsMove(msTicks);
+           /*
            for (int k = 0; k < numBlocks; k++)
            {
                uint8_t collision = player2.CheckCollision(&blocks[k]);
@@ -81,8 +87,17 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                   blocks[k].Disable();
                }
            }
+           */
            nextTime = msTicks + 50;
        }
+       for (int i = 0; i < maxBalls; i++)
+       {
+           if (balls[i].getActive() && balls[i].getNextPhysicsTime() < msTicks)
+           {
+               balls[i].PhysicsMove(msTicks);
+           }
+       }
+       /*
        // Load balancing, each gameobject only moves at certain times
        for (int i = 0; i < numBlocks; i++)
        {
@@ -138,6 +153,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
            }
             nextBlockTime = msTicks + 600;
        }
+       */
        // Joystick/ Menu button handler
        if (debounceTimes[0] < msTicks && digitalRead(JOYSTICK_BTN))
        {
@@ -164,66 +180,12 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        // Fire button
        if (fireDebounce < msTicks && digitalRead(TOP_LEFT) == 0)
        {
-           // User fired
-           int16_t xFirePos = player2.getYPos() + 5.0;
-           int16_t yFirePos = player2.getXPos();
-           float shotVelocity = -40.0;
-
-           if (firePoint == 1)
-           {
-               yFirePos = yFirePos + player2.getHeight();
-           }
-           firePoint++;
-           if (firePoint == 2)
-           {
-              firePoint = 0;
-           }
-
-           if (player2.getRotation() == LEFT)
-           {
-               shotVelocity *= -1.0;
-               xFirePos = player2.getYPos() - 5.0;
-           }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(0, shotVelocity);
-           blasters[blasterIndex].SetBehavior(true, 0);
-           blasterIndex++;
-           if (blasterIndex == numBlasters)
-           {
-              blasterIndex = 0;
-           }
+           
            fireDebounce = msTicks + 100; // Right now 200ms debounce time
        }
        // Top right button handler
        if (fireDebounce < msTicks && digitalRead(TOP_RIGHT) == 0)
        {
-           // User fired
-           int16_t xFirePos = player2.getYPos() + 5.0;
-           int16_t yFirePos = player2.getXPos();
-           float shotVelocity = -40.0;
-
-           if (player2.getRotation() == LEFT)
-           {
-               shotVelocity *= -1.0;
-               xFirePos = player2.getYPos() - 5.0;
-           }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(-4.0, shotVelocity);
-           blasters[blasterIndex].SetBehavior(true, 0);
-           blasterIndex++;
-           if (blasterIndex == numBlasters)
-           {
-              blasterIndex = 0;
-           }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos + player2.getHeight(), 10, 2, COLOR_RED, bgColor);
-           blasters[blasterIndex].SetVelocity(4.0, shotVelocity);
-           blasters[blasterIndex].SetBehavior(true, 0);
-           blasterIndex++;
-           if (blasterIndex == numBlasters)
-           {
-              blasterIndex = 0;
-           }
-           //blasters[blasterIndex](&tft, 50, 150, 10, 2, bgColor, COLOR_RED);
            fireDebounce = msTicks + 300; // Right now 200ms debounce time
            //debounceTimes[4] = msTicks + 200; // Right now 200ms debounce time
        }
@@ -243,15 +205,17 @@ void BrickBreaker(Adafruit_ILI9341* tft)
            xScaler = xScaler / (float)(ADC_MAX / 2);
            float yScaler = (float)analogRead(JOYSTICK_Y) - (float)(ADC_MAX / 2);
            yScaler = yScaler / (float)(ADC_MAX / 2);
+           /*
            if (xScaler > 0.2)
            {
-              player2.RotateLeft();
+              playerPaddle.RotateLeft();
            }
            else if (xScaler < -0.2)
            {
-              player2.RotateRight();
+              playerPaddle.RotateRight();
            }
-           player2.SetVelocity(xScaler * 30.0, yScaler * -30.0);
+           */
+           playerPaddle.SetVelocity(0.0, xScaler * 30.0);
            nextControlTime = msTicks + 50;
        }
    }

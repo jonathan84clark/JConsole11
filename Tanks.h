@@ -1,13 +1,12 @@
 /*******************************************************
-* DEBRIS
-* DESC: Debris is a simple game where you destroy blocks heading toward
-* your aircraft
+* BRICK BREAKER
+* DESC: Brick breaker is a fun game used on JConsole11
 * Author: Jonathan L Clark
 * Date: 5/31/2021
 *******************************************************/
-#ifndef _DEBRIS_
-#define _DEBRIS_
+#ifndef _TANKS_
+#define _TANKS_
 
-void Debris(Adafruit_ILI9341* tft);
+void Tanks(Adafruit_ILI9341* tft);
 
 #endif

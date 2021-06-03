@@ -20,6 +20,7 @@ Solid::Solid()
 {
    prevXStopped = false;
    prevYStopped = false;
+   disableOnHit = false;
    active = false;
    nextPhysicsTime = 0;
    rotation = UP;
@@ -261,7 +262,7 @@ void Solid::SetPhysics(float inMass, float inFriction, float inGravity, float in
 
 void Solid::Disable()
 {
-   active = false;
+    active = false;
     tft->fillRect(xPos, yPos, width, height, bg_color);
 }
 
@@ -298,10 +299,10 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       prevYStopped = false;
    }
 
-   if (yPos < 0)
+   if (yPos < 20)
    {
       xMoveStopped = 1;
-      yPos = 0;
+      yPos = 20;
       walls |= 0x01;
    }
    else if ((yPos + height) > 240)
