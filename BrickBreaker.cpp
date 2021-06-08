@@ -72,10 +72,30 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        if (nextTime < msTicks)
        {
            playerPaddle.PhysicsMove(msTicks);
-           uint8_t collision = balls[i].CheckCollision(playerPaddle))
+           int16_t intercept = 0;
+           uint8_t collision = playerPaddle.CheckCollision(&balls[0], &intercept);
+           if (collision)
            {
-               //balls[i].
+              
+              float yVelocity = balls[0].getVelocityX();
+              float xVelocity = balls[0].getVelocityY();
+              
+              if (intercept < 10)
+              {
+                 xVelocity = 10.0;
+              }
+              else if (intercept > 45)
+              {
+                 xVelocity = -10.0;
+              }
+              balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
+              Serial.print("Intercept: ");
+              Serial.println(intercept);
            }
+           //uint8_t collision = balls[i].CheckCollision(playerPaddle))
+           //{
+           //    //balls[i].
+           //}
            /*
            for (int k = 0; k < numBlocks; k++)
            {

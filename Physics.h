@@ -22,6 +22,9 @@ class Physics
        void SetVelocity(float inVelX, float inVelY);
        void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
        void HandleCollision(uint8_t collision);
+       float getVelocityX() { return velocityX;}
+       float getVelocityY() { return velocityY;}
+       
        //bool getEnabled() { return enabled;}
    
    private:

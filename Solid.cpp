@@ -152,6 +152,82 @@ void Solid::RotateRight()
 * DESC: Checks the input game object to determine if a collision has
 * occured.
 ******************************************************************/
+uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
+{
+  if (collision_cool_down > 0)
+  {
+     collision_cool_down--;
+     return 0x00;
+  }
+  if (!other->getActive() || !active)
+  {
+      return 0x00;
+  }
+
+  uint8_t collision = 0x00;
+  uint8_t otherCollision = 0x00;
+  // Calculate all the edges
+  int myTopEdge = xPos + width;
+  int otherTopEdge = other->xPos + other->width;
+  int myRightEdge = yPos + height;
+  int otherRightEdge = other->yPos + other->height;
+
+   // Handle x direction collisions
+   if (xPos <= otherTopEdge && myTopEdge >= other->xPos)
+   {
+       // Object collided with the other on its right edge
+       if (myRightEdge >= other->yPos && myRightEdge <= otherRightEdge)
+       {
+          // Newtons 3rd law
+          collision |= 0x01;
+          otherCollision |= 0x02;
+          //*xIntercept = otherRightEdge - other->yPos;
+          collision_cool_down = 10;
+       }
+       // Object collided with the other on its left edge
+       if (yPos <= otherRightEdge && yPos >= other->yPos)
+       {
+          // Newtons 3rd law
+          collision |= 0x01;
+          otherCollision |= 0x02;
+          //*xIntercept = otherRightEdge - other->yPos;
+          collision_cool_down = 10;
+       }
+   }
+
+   // Handle y direction collisions
+   if (yPos <= otherRightEdge && myRightEdge >= other->yPos)
+   {
+      // Hitting an object on the bottom edge
+      if (xPos <= otherTopEdge && xPos >= other->xPos)
+      {
+         // Newtons 3rd law
+         collision |= 0x02;
+         otherCollision |= 0x01;
+         *xIntercept = myTopEdge - other->xPos;
+         collision_cool_down = 10;
+      }
+      // Hitting an object on the top edge
+      if (myTopEdge >= other->xPos && myTopEdge <= otherTopEdge)
+      {
+         // Newtons 3rd law
+         collision |= 0x02;
+         otherCollision |= 0x01;
+         *xIntercept = myTopEdge - other->xPos;
+         collision_cool_down = 10;
+      }
+      // Figure out where the paddle hit
+      
+   }
+   
+   return collision;
+}
+
+/******************************************************************
+* CHECK COLLISION
+* DESC: Checks the input game object to determine if a collision has
+* occured.
+******************************************************************/
 uint8_t Solid::CheckCollision(Solid* other)
 {
   if (collision_cool_down > 0)
@@ -215,8 +291,6 @@ uint8_t Solid::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
    }
-   //physics.HandleCollision(collision);
-   //other->physics.HandleCollision(collision);
    
    return collision;
 }

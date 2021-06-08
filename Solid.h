@@ -29,6 +29,7 @@ class Solid
       void SetVelocity(float inXVelocity, float inYVelocity);
       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
       uint8_t CheckCollision(Solid* other);
+      uint8_t CheckCollision(Solid* other, int16_t* xIntercept);
       void Disable();
       void Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor);
       bool getActive() { return active;}
@@ -37,6 +38,8 @@ class Solid
       int16_t getWidth() { return width; }
       int16_t getXPos() { return xPos; }
       int16_t getYPos() { return yPos; }
+      float getVelocityX() { return physics.getVelocityX();}
+      float getVelocityY() { return physics.getVelocityY();}
    
    private:
       Adafruit_ILI9341 *tft;
