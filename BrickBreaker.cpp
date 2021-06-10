@@ -79,16 +79,39 @@ void BrickBreaker(Adafruit_ILI9341* tft)
               
               float yVelocity = balls[0].getVelocityX();
               float xVelocity = balls[0].getVelocityY();
-              
+
+              //if (intercept
               if (intercept < 10)
               {
-                 xVelocity = 10.0;
+                  xVelocity = 15;
+                  yVelocity = 8; 
+                  balls[0].SetVelocity(yVelocity, xVelocity);
               }
-              else if (intercept > 45)
+              else if (intercept < 20)
+              {
+                 xVelocity = 10.0;
+                 balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
+              }
+              else if (intercept > 40)
+              {
+                  xVelocity = -15;
+                  yVelocity = 8; 
+                  balls[0].SetVelocity(yVelocity, xVelocity);
+              }
+              else if (intercept > 30)
               {
                  xVelocity = -10.0;
+                 balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
               }
-              balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
+              else
+              {
+                 balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
+              }
+              //else if (intercept > 40)
+              //{
+              //   xVelocity = -10.0;
+              //}
+              //balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
               Serial.print("Intercept: ");
               Serial.println(intercept);
            }

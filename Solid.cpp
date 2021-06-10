@@ -171,6 +171,7 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
   int otherTopEdge = other->xPos + other->width;
   int myRightEdge = yPos + height;
   int otherRightEdge = other->yPos + other->height;
+  int otherCenterX = other->xPos + (other->width / 2);
 
    // Handle x direction collisions
    if (xPos <= otherTopEdge && myTopEdge >= other->xPos)
@@ -181,6 +182,7 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
           // Newtons 3rd law
           collision |= 0x01;
           otherCollision |= 0x02;
+          *xIntercept = otherCenterX - xPos;
           //*xIntercept = otherRightEdge - other->yPos;
           collision_cool_down = 10;
        }
@@ -190,6 +192,7 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
           // Newtons 3rd law
           collision |= 0x01;
           otherCollision |= 0x02;
+          *xIntercept = otherCenterX - xPos;
           //*xIntercept = otherRightEdge - other->yPos;
           collision_cool_down = 10;
        }
@@ -204,7 +207,8 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
          // Newtons 3rd law
          collision |= 0x02;
          otherCollision |= 0x01;
-         *xIntercept = myTopEdge - other->xPos;
+         *xIntercept = otherCenterX - xPos;
+         //*xIntercept = myTopEdge - other->xPos;
          collision_cool_down = 10;
       }
       // Hitting an object on the top edge
@@ -213,7 +217,8 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
          // Newtons 3rd law
          collision |= 0x02;
          otherCollision |= 0x01;
-         *xIntercept = myTopEdge - other->xPos;
+         *xIntercept = otherCenterX - xPos;
+         //*xIntercept = myTopEdge - other->xPos;
          collision_cool_down = 10;
       }
       // Figure out where the paddle hit
