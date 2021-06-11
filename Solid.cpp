@@ -22,6 +22,7 @@ Solid::Solid()
    prevYStopped = false;
    disableOnHit = false;
    active = false;
+   lastCollision = 0;
    nextPhysicsTime = 0;
    rotation = UP;
    collision_cool_down = 0;
@@ -30,7 +31,7 @@ Solid::Solid()
 /******************************************************************
 * GAME OBJECT CONSTRUCTOR
 ******************************************************************/
-Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
+Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor, int objectId)
 {
    yPos = inYPos;
    xPos = inXPos;
@@ -40,9 +41,11 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    bg_color = inBgColor;
    color = inColor;
    collision_cool_down = 0;
+   id = objectId;
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
+   lastCollision = 0;
    rotation = UP;
    nextPhysicsTime = 0;
    active = true;
@@ -51,7 +54,7 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempwidth, yPos / 2.0, color);
 }
 
-void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor)
+void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor, int objectId)
 {
    yPos = inYPos;
    xPos = inXPos;
@@ -63,6 +66,8 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
+   lastCollision = 0;
+   id = objectId;
    collision_cool_down = 0;
    rotation = UP;
    //isSolid = false;
@@ -166,6 +171,11 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
      collision_cool_down--;
      return 0x00;
   }
+  if (other->getId() == lastCollision)
+  {
+
+     //return 0x00; // The last object we collided with is the object we just collided with
+  }
   if (!other->getActive() || !active)
   {
       return 0x00;
@@ -231,6 +241,7 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
       // Figure out where the paddle hit
       
    }
+   lastCollision = other->getId();
    
    return collision;
 }
@@ -246,6 +257,11 @@ uint8_t Solid::CheckCollision(Solid* other)
   {
      collision_cool_down--;
      return 0x00;
+  }
+  if (other->getId() == lastCollision)
+  {
+     
+     return 0x00; // The last object we collided with is the object we just collided with
   }
   if (!other->getActive() || !active)
   {
@@ -303,6 +319,7 @@ uint8_t Solid::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
    }
+   lastCollision = other->getId();
    
    return collision;
 }
@@ -375,12 +392,14 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
        yMoveStopped = 1;
        xPos = 0;
        walls |= 0x02;
+       lastCollision = 0; // Clear the last collision if we hit a wall
    }
    else if ((xPos + width) > 320)
    {
        yMoveStopped = 2;
        xPos = 320 - width;
        walls |= 0x02;
+       lastCollision = 0; // Clear the last collision if we hit a wall
    }
    else
    {
@@ -392,12 +411,14 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       xMoveStopped = 1;
       yPos = 20;
       walls |= 0x01;
+      lastCollision = 0; // Clear the last collision if we hit a wall
    }
    else if ((yPos + height) > 240)
    {
       xMoveStopped = 2;
       yPos = 240 - height;
       walls |= 0x01;
+      lastCollision = 0; // Clear the last collision if we hit a wall
    }
    else
    {

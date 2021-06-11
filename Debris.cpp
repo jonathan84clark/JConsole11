@@ -34,6 +34,7 @@ void Debris(Adafruit_ILI9341* tft)
    int numBlocks = 10;
    int numBlasters = 20;
    int blasterIndex = 0;
+   int objectId = 30;
 
    GameObject player2(tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
@@ -130,7 +131,8 @@ void Debris(Adafruit_ILI9341* tft)
                      colorIndex = 0;
                   }
                   uint16_t selColor = randomColors[colorIndex];
-                  blocks[i].Activate(tft, 300, randomY, 12, 12, selColor, bgColor);
+                  blocks[i].Activate(tft, 300, randomY, 12, 12, selColor, bgColor, objectId);
+                  objectId++;
                   blocks[i].SetVelocity(0.0, 10.0);
                   blocks[i].SetBehavior(true, 0);
                   
@@ -185,7 +187,8 @@ void Debris(Adafruit_ILI9341* tft)
                shotVelocity *= -1.0;
                xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor, objectId);
+           objectId++;
            blasters[blasterIndex].SetVelocity(0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
@@ -208,7 +211,8 @@ void Debris(Adafruit_ILI9341* tft)
                shotVelocity *= -1.0;
                xFirePos = player2.getYPos() - 5.0;
            }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos, 10, 2, COLOR_RED, bgColor, objectId);
+           objectId++;
            blasters[blasterIndex].SetVelocity(-4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;
@@ -216,7 +220,8 @@ void Debris(Adafruit_ILI9341* tft)
            {
               blasterIndex = 0;
            }
-           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos + player2.getHeight(), 10, 2, COLOR_RED, bgColor);
+           blasters[blasterIndex].Activate(tft, xFirePos, yFirePos + player2.getHeight(), 10, 2, COLOR_RED, bgColor, objectId);
+           objectId++;
            blasters[blasterIndex].SetVelocity(4.0, shotVelocity);
            blasters[blasterIndex].SetBehavior(true, 0);
            blasterIndex++;

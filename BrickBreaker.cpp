@@ -33,7 +33,9 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int blasterIndex = 0;
    int maxBalls = 6;
 
-   Solid playerPaddle(tft, 100, 220, 40, 5, COLOR_BLACK, bgColor);
+   int startId = 30;
+   Solid playerPaddle(tft, 100, 220, 40, 5, COLOR_BLACK, bgColor, startId);
+   startId++;
    //Solid playerPaddle(tft, 100, 220, 10, 10, COLOR_BLACK, bgColor);
    //Solid player2(tft, 100, 50, XWING_WIDTH, XWING_HEIGHT, xWing, bgColor);
    Bar healthBar(tft, 235, 5, 12, 80, COLOR_BLUE, COLOR_RED, bgColor);
@@ -61,12 +63,16 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int16_t brickWidth = 35;
    int16_t brickIndex = 0;
 
+
    for (int j = 0; j < 10; j++)
    {
       for (int i = 0; i < 8; i++)
       {
-         bricks[brickIndex].Activate(tft, startxBrickPos, startYBrickPos, brickWidth, 10, COLOR_BLUE, bgColor);
+         bricks[brickIndex].Activate(tft, startxBrickPos, startYBrickPos, brickWidth, 10, COLOR_BLUE, bgColor, startId);
          startxBrickPos+= (brickWidth + brickSeperation);
+         Serial.print("Setup: ");
+         Serial.println(bricks[brickIndex].getId());
+         startId++;
          brickIndex++;
       }
       startxBrickPos = 5;
@@ -74,9 +80,10 @@ void BrickBreaker(Adafruit_ILI9341* tft)
       
    }
    //bricks[0].Activate(tft, 20, 20, 35, 10, COLOR_BLUE, bgColor);
-   balls[0].Activate(tft, 50, 200, 10, 10, COLOR_RED, bgColor);
+   balls[0].Activate(tft, 50, 200, 10, 10, COLOR_RED, bgColor, startId);
    balls[0].SetPhysics(200, 0.0, 0.0, 1.0, 0.0);
    balls[0].SetVelocity(10.0, 10.0);
+   startId++;
 
 
    tft->setCursor(2, 2);
@@ -139,7 +146,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                {
                   if (bricks[j].getActive())
                   {
-                      uint8_t collision = bricks[j].CheckCollision(&balls[i], &intercept);
+                      uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept);
                       if (collision)
                       {
                          bricks[j].Draw();

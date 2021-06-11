@@ -18,7 +18,7 @@ class Solid
    public:
       // Public Functions
       Solid();
-      Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor);
+      Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor, int objectId);
       uint8_t Move(int16_t deltaX, int16_t deltaY);
       void PhysicsMove(unsigned long milliseconds);
       void RotateDown();
@@ -32,7 +32,7 @@ class Solid
       uint8_t CheckCollision(Solid* other);
       uint8_t CheckCollision(Solid* other, int16_t* xIntercept);
       void Disable();
-      void Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor);
+      void Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor, int objectId);
       bool getActive() { return active;}
       unsigned long getNextPhysicsTime() { return nextPhysicsTime;}
       int16_t getHeight() { return height; }
@@ -41,9 +41,12 @@ class Solid
       int16_t getYPos() { return yPos; }
       float getVelocityX() { return physics.getVelocityX();}
       float getVelocityY() { return physics.getVelocityY();}
+      int getId() { return id; }
    
    private:
       Adafruit_ILI9341 *tft;
+      int lastCollision;
+      int id;
       Physics physics;
       uint8_t collision_cool_down;
       uint16_t color;
