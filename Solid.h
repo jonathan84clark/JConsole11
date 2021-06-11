@@ -25,6 +25,7 @@ class Solid
       void RotateUp();
       void RotateLeft();
       void RotateRight();
+      void Draw();
       void SetBehavior(bool inDisableOnHit, int16_t inHealth);
       void SetVelocity(float inXVelocity, float inYVelocity);
       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);

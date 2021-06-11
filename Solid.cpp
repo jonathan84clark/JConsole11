@@ -39,6 +39,7 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    tft = inTft;
    bg_color = inBgColor;
    color = inColor;
+   collision_cool_down = 0;
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
@@ -62,12 +63,18 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
+   collision_cool_down = 0;
    rotation = UP;
    //isSolid = false;
    active = true;
    tft->fillRect(xPos, yPos, width, height, color);
    //tft->fillCircle(xPos, yPos, 6, color);
    //tft->fillTriangle(xPos, yPos, xPos+20, yPos, xPos + tempwidth, yPos / 2.0, color);
+}
+
+void Solid::Draw()
+{
+   tft->fillRect(xPos, yPos, width, height, color);
 }
 
 void Solid::SetBehavior(bool inDisableOnHit, int16_t inHealth)

@@ -28,7 +28,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    {
       debounceTimes[i] = millis() + i;
    }
-   int numBlocks = 10;
+   int numBlocks = 100;
    int numBlasters = 20;
    int blasterIndex = 0;
    int maxBalls = 6;
@@ -54,7 +54,27 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int colorIndex = 0;
    int16_t startYPos = 10;
    unsigned int score = 0;
-   balls[0].Activate(tft, 50, 50, 10, 10, COLOR_RED, bgColor);
+
+   int16_t startxBrickPos = 5;
+   int16_t startYBrickPos = 20;
+   int16_t brickSeperation = 3;
+   int16_t brickWidth = 35;
+   int16_t brickIndex = 0;
+
+   for (int j = 0; j < 10; j++)
+   {
+      for (int i = 0; i < 8; i++)
+      {
+         bricks[brickIndex].Activate(tft, startxBrickPos, startYBrickPos, brickWidth, 10, COLOR_BLUE, bgColor);
+         startxBrickPos+= (brickWidth + brickSeperation);
+         brickIndex++;
+      }
+      startxBrickPos = 5;
+      startYBrickPos += (10 + brickSeperation);
+      
+   }
+   //bricks[0].Activate(tft, 20, 20, 35, 10, COLOR_BLUE, bgColor);
+   balls[0].Activate(tft, 50, 200, 10, 10, COLOR_RED, bgColor);
    balls[0].SetPhysics(200, 0.0, 0.0, 1.0, 0.0);
    balls[0].SetVelocity(10.0, 10.0);
 
@@ -80,7 +100,6 @@ void BrickBreaker(Adafruit_ILI9341* tft)
               float yVelocity = balls[0].getVelocityX();
               float xVelocity = balls[0].getVelocityY();
 
-              //if (intercept
               if (intercept < 10)
               {
                   xVelocity = 15;
@@ -107,34 +126,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
               {
                  balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
               }
-              //else if (intercept > 40)
-              //{
-              //   xVelocity = -10.0;
-              //}
-              //balls[0].SetVelocity(yVelocity * -1.0, xVelocity);
-              Serial.print("Intercept: ");
-              Serial.println(intercept);
            }
-           //uint8_t collision = balls[i].CheckCollision(playerPaddle))
-           //{
-           //    //balls[i].
-           //}
-           /*
-           for (int k = 0; k < numBlocks; k++)
-           {
-               uint8_t collision = player2.CheckCollision(&blocks[k]);
-               if (collision)
-               {
-                  currentHealth -= 3;
-                  if (currentHealth < 0.0)
-                  {
-                     currentHealth = 0.0;
-                  }
-                  healthBar.Update(currentHealth / originalHealth);
-                  blocks[k].Disable();
-               }
-           }
-           */
            nextTime = msTicks + 50;
        }
        for (int i = 0; i < maxBalls; i++)
@@ -142,65 +134,25 @@ void BrickBreaker(Adafruit_ILI9341* tft)
            if (balls[i].getActive() && balls[i].getNextPhysicsTime() < msTicks)
            {
                balls[i].PhysicsMove(msTicks);
-           }
-       }
-       /*
-       // Load balancing, each gameobject only moves at certain times
-       for (int i = 0; i < numBlocks; i++)
-       {
-           if (blocks[i].getActive() && blocks[i].getNextPhysicsTime() < msTicks)
-           {
-               blocks[i].PhysicsMove(msTicks);
-           }
-       }
-       for (int i = 0; i < numBlasters; i++)
-       {
-           if (blasters[i].getActive() && blasters[i].getNextPhysicsTime() < msTicks)
-           {
-               blasters[i].PhysicsMove(msTicks);
-               // See if this blaster has hit any blocks
+               int16_t intercept = 0;
                for (int j = 0; j < numBlocks; j++)
                {
-                   uint8_t collision = blasters[i].CheckCollision(&blocks[j]);
-                   if (collision)
-                   {
-                      blasters[i].Disable();
-                      blocks[j].Disable();
-                      tft->setTextColor(bgColor);  
-                      tft->setTextSize(2);
-                      tft->setCursor(75, 2);
-                      tft->print(score);
-                      score++;
-                      tft->setTextColor(ILI9341_BLUE);  
-                      tft->setCursor(75, 2);
-                      tft->print(score);
-                   }
-               }
-           }
-       }
-       if (nextBlockTime < msTicks)
-       {
-           for (int i = 0; i < numBlocks; i++)
-           {
-               if (!blocks[i].getActive())
-               {
-                  int16_t randomY = random(20, 230);
-                  colorIndex++;
-                  if (colorIndex > 5)
+                  if (bricks[j].getActive())
                   {
-                     colorIndex = 0;
+                      uint8_t collision = bricks[j].CheckCollision(&balls[i], &intercept);
+                      if (collision)
+                      {
+                         bricks[j].Draw();
+                         Serial.print("Collision: ");
+                         Serial.println(collision);
+                         float yVelocity = balls[i].getVelocityX();
+                         float xVelocity = balls[i].getVelocityY();
+                         balls[i].SetVelocity(yVelocity * -1.0, xVelocity);
+                      }
                   }
-                  uint16_t selColor = randomColors[colorIndex];
-                  blocks[i].Activate(tft, 300, randomY, 12, 12, selColor, bgColor);
-                  blocks[i].SetVelocity(0.0, 10.0);
-                  blocks[i].SetBehavior(true, 0);
-                  
-                  break;
                }
            }
-            nextBlockTime = msTicks + 600;
        }
-       */
        // Joystick/ Menu button handler
        if (debounceTimes[0] < msTicks && digitalRead(JOYSTICK_BTN))
        {
