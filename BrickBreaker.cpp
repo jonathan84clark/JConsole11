@@ -70,8 +70,6 @@ void BrickBreaker(Adafruit_ILI9341* tft)
       {
          bricks[brickIndex].Activate(tft, startxBrickPos, startYBrickPos, brickWidth, 10, COLOR_BLUE, bgColor, startId);
          startxBrickPos+= (brickWidth + brickSeperation);
-         Serial.print("Setup: ");
-         Serial.println(bricks[brickIndex].getId());
          startId++;
          brickIndex++;
       }
@@ -100,7 +98,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
        {
            playerPaddle.PhysicsMove(msTicks);
            int16_t intercept = 0;
-           uint8_t collision = playerPaddle.CheckCollision(&balls[0], &intercept);
+           uint8_t collision = playerPaddle.CheckCollision(&balls[0], &intercept, true);
            if (collision)
            {
               
@@ -146,15 +144,30 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                {
                   if (bricks[j].getActive())
                   {
-                      uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept);
+                      uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept, false);
                       if (collision)
                       {
-                         bricks[j].Draw();
-                         Serial.print("Collision: ");
-                         Serial.println(collision);
+                         bricks[j].Disable();
+                         tft->setTextColor(bgColor);  
+                         tft->setTextSize(2);
+                         tft->setCursor(75, 2);
+                         tft->print(score);
+                         score++;
+                         tft->setTextColor(ILI9341_BLUE);  
+                         tft->setCursor(75, 2);
+                         tft->print(score);
                          float yVelocity = balls[i].getVelocityX();
                          float xVelocity = balls[i].getVelocityY();
-                         balls[i].SetVelocity(yVelocity * -1.0, xVelocity);
+                         if (collision & 0x01)
+                         {
+                            xVelocity *= -1.0;  
+                         }
+                         if (collision & 0x02)
+                         {
+                            yVelocity *= -1.0;
+                         }
+
+                         balls[i].SetVelocity(yVelocity, xVelocity);
                       }
                   }
                }

@@ -53,8 +53,8 @@ void setup()
   tft.setRotation(1);
   Menu menu(&tft, COLOR_DARKGREEN);
 
-  //menu.MultiOption("JConsole 11", mainMenuOptions, 4);
-  BrickBreaker(&tft);
+  menu.MultiOption("JConsole 11", mainMenuOptions, 4);
+  //BrickBreaker(&tft);
 }
 
 void loop(void) 

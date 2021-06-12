@@ -22,7 +22,7 @@ Solid::Solid()
    prevYStopped = false;
    disableOnHit = false;
    active = false;
-   lastCollision = 0;
+   lastCollision = NULL;
    nextPhysicsTime = 0;
    rotation = UP;
    collision_cool_down = 0;
@@ -45,7 +45,7 @@ Solid::Solid(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t in
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
-   lastCollision = 0;
+   lastCollision = NULL;
    rotation = UP;
    nextPhysicsTime = 0;
    active = true;
@@ -66,7 +66,7 @@ void Solid::Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, in
    prevXStopped = false;
    prevYStopped = false;
    disableOnHit = false;
-   lastCollision = 0;
+   lastCollision = NULL;
    id = objectId;
    collision_cool_down = 0;
    rotation = UP;
@@ -164,17 +164,16 @@ void Solid::RotateRight()
 * DESC: Checks the input game object to determine if a collision has
 * occured.
 ******************************************************************/
-uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
+uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept, bool ignoreLast)
 {
   if (collision_cool_down > 0)
   {
      collision_cool_down--;
      return 0x00;
   }
-  if (other->getId() == lastCollision)
+  if (other == lastCollision && !ignoreLast)
   {
-
-     //return 0x00; // The last object we collided with is the object we just collided with
+     return 0x00; // The last object we collided with is the object we just collided with
   }
   if (!other->getActive() || !active)
   {
@@ -241,7 +240,7 @@ uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept)
       // Figure out where the paddle hit
       
    }
-   lastCollision = other->getId();
+   lastCollision = other;
    
    return collision;
 }
@@ -258,7 +257,7 @@ uint8_t Solid::CheckCollision(Solid* other)
      collision_cool_down--;
      return 0x00;
   }
-  if (other->getId() == lastCollision)
+  if (other == lastCollision)
   {
      
      return 0x00; // The last object we collided with is the object we just collided with
@@ -319,7 +318,7 @@ uint8_t Solid::CheckCollision(Solid* other)
          collision_cool_down = 10;
       }
    }
-   lastCollision = other->getId();
+   lastCollision = other;
    
    return collision;
 }
@@ -392,14 +391,14 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
        yMoveStopped = 1;
        xPos = 0;
        walls |= 0x02;
-       lastCollision = 0; // Clear the last collision if we hit a wall
+       lastCollision = NULL; // Clear the last collision if we hit a wall
    }
    else if ((xPos + width) > 320)
    {
        yMoveStopped = 2;
        xPos = 320 - width;
        walls |= 0x02;
-       lastCollision = 0; // Clear the last collision if we hit a wall
+       lastCollision = NULL; // Clear the last collision if we hit a wall
    }
    else
    {
@@ -411,14 +410,14 @@ uint8_t Solid::Move(int16_t deltaX, int16_t deltaY)
       xMoveStopped = 1;
       yPos = 20;
       walls |= 0x01;
-      lastCollision = 0; // Clear the last collision if we hit a wall
+      lastCollision = NULL; // Clear the last collision if we hit a wall
    }
    else if ((yPos + height) > 240)
    {
       xMoveStopped = 2;
       yPos = 240 - height;
       walls |= 0x01;
-      lastCollision = 0; // Clear the last collision if we hit a wall
+      lastCollision = NULL; // Clear the last collision if we hit a wall
    }
    else
    {
