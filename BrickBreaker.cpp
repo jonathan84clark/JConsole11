@@ -63,7 +63,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
    int16_t brickWidth = 35;
    int16_t brickIndex = 0;
 
-
+   /*
    for (int j = 0; j < 10; j++)
    {
       for (int i = 0; i < 8; i++)
@@ -77,10 +77,11 @@ void BrickBreaker(Adafruit_ILI9341* tft)
       startYBrickPos += (10 + brickSeperation);
       
    }
-   //bricks[0].Activate(tft, 20, 20, 35, 10, COLOR_BLUE, bgColor);
-   balls[0].Activate(tft, 50, 200, 10, 10, COLOR_RED, bgColor, startId);
+   */
+   bricks[0].Activate(tft, 20, 200, 35, 10, COLOR_BLUE, bgColor, startId);
+   balls[0].Activate(tft, 200, 200, 10, 10, COLOR_RED, bgColor, startId);
    balls[0].SetPhysics(200, 0.0, 0.0, 1.0, 0.0);
-   balls[0].SetVelocity(10.0, 10.0);
+   balls[0].SetVelocity(0.0, 10.0);
    startId++;
 
 
@@ -144,9 +145,12 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                {
                   if (bricks[j].getActive())
                   {
-                      uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept, false);
+                      //uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept, false);
+                      uint8_t collision = balls[i].CheckEdgeIntersect(&bricks[j]);
+                      CheckEdgeIntersect
                       if (collision)
                       {
+                        /*
                          bricks[j].Disable();
                          tft->setTextColor(bgColor);  
                          tft->setTextSize(2);
@@ -168,6 +172,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                          }
 
                          balls[i].SetVelocity(yVelocity, xVelocity);
+                         */
                       }
                   }
                }

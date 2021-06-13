@@ -31,6 +31,7 @@ class Solid
       void SetPhysics(float inMass, float inFriction, float inGravity, float inBouncy, float inDrag);
       uint8_t CheckCollision(Solid* other);
       uint8_t CheckCollision(Solid* other, int16_t* xIntercept, bool ignoreLast);
+      uint8_t CheckEdgeIntersect(Solid* other);
       void Disable();
       void Activate(Adafruit_ILI9341 *inTft, int16_t inXPos, int16_t inYPos, int16_t inWidth, int16_t inHeight, uint16_t inColor, uint16_t inBgColor, int objectId);
       bool getActive() { return active;}

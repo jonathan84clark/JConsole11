@@ -164,6 +164,17 @@ void Solid::RotateRight()
 * DESC: Checks the input game object to determine if a collision has
 * occured.
 ******************************************************************/
+uint8_t Solid::CheckEdgeIntersect(Solid* other)
+{
+
+   return 0;
+}
+
+/******************************************************************
+* CHECK COLLISION
+* DESC: Checks the input game object to determine if a collision has
+* occured.
+******************************************************************/
 uint8_t Solid::CheckCollision(Solid* other, int16_t* xIntercept, bool ignoreLast)
 {
   if (collision_cool_down > 0)
