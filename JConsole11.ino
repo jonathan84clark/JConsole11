@@ -16,6 +16,7 @@
 #include "Menu.h"
 #include "Config.h"
 #include "BrickBreaker.h"
+#include "Debris.h"
 
 // For the Adafruit shield, these are the default.
 #define TFT_DC 4
@@ -54,7 +55,8 @@ void setup()
   Menu menu(&tft, COLOR_DARKGREEN);
 
   //menu.MultiOption("JConsole 11", mainMenuOptions, 4);
-  BrickBreaker(&tft);
+  Debris(&tft);
+  //BrickBreaker(&tft);
 }
 
 void loop(void) 

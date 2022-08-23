@@ -147,7 +147,7 @@ void BrickBreaker(Adafruit_ILI9341* tft)
                   {
                       //uint8_t collision = balls[i].CheckCollision(&bricks[j], &intercept, false);
                       uint8_t collision = balls[i].CheckEdgeIntersect(&bricks[j]);
-                      CheckEdgeIntersect
+                      //CheckEdgeIntersect
                       if (collision)
                       {
                         /*
