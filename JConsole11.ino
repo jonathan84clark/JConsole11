@@ -54,8 +54,8 @@ void setup()
   tft.setRotation(1);
   Menu menu(&tft, COLOR_DARKGREEN);
 
-  //menu.MultiOption("JConsole 11", mainMenuOptions, 4);
-  Debris(&tft);
+  menu.MultiOption("JConsole 11", mainMenuOptions, 4);
+  //Debris(&tft);
   //BrickBreaker(&tft);
 }
 

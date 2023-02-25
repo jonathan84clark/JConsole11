@@ -72,14 +72,14 @@ int Menu::MultiOption(char* title, char options[][15], int numOptions)
           // Brick Breaker selected
           else if (selectedOption == 1)
           {
-              BrickBreaker(tft);
-              DrawMenu(title, options, numOptions, selectedOption);
+              //BrickBreaker(tft);
+              //DrawMenu(title, options, numOptions, selectedOption);
           }
           // Tanks option selected
           else if (selectedOption == 2)
           {
-              Tanks(tft);
-              DrawMenu(title, options, numOptions, selectedOption);
+              //Tanks(tft);
+              //DrawMenu(title, options, numOptions, selectedOption);
           }
           selectDebounce = msTicks + 200;
        }
